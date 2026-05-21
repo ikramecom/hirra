@@ -1,0 +1,127 @@
+{
+  "brand": {
+    "name": "هِرّة",
+    "tagline": "لأن قطتك تستاهل الأفضل"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "shop": "منتجاتنا",
+    "bundles": "المجموعات",
+    "bestsellers": "الأكثر مبيعاً",
+    "gifts": "هدايا",
+    "about": "قصتنا",
+    "track": "تتبعي طلبك",
+    "contact": "تواصلي معنا",
+    "language": "EN"
+  },
+  "announce": {
+    "free_shipping": "شحن مجاني للطلبات فوق ٢٠٠ ريال 🐾",
+    "cod_available": "دفع عند الاستلام متاح في كل المدن",
+    "fast_delivery": "أسرع توصيل في الرياض وجدة والدمام — ١-٣ أيام"
+  },
+  "cta": {
+    "add_to_cart": "أضيفي للسلة",
+    "buy_now": "اطلبيها الآن",
+    "checkout": "إتمام الشراء",
+    "continue_shopping": "إكمال التسوق",
+    "order_via_whatsapp": "اطلبي عبر واتساب",
+    "view_product": "عرض المنتج",
+    "shop_hero": "تسوقي البطلة الجديدة 🐾",
+    "see_story": "شوفي قصتنا"
+  },
+  "trust": {
+    "ksa_designed": "مصمم للبيت السعودي",
+    "fast_shipping": "شحن سريع ١-٣ أيام",
+    "guarantee": "ضمان رضا ٣٠ يوم",
+    "arabic_support": "دعم واتساب بالعربي",
+    "cod_label": "دفع عند الاستلام",
+    "secure_payment": "دفع آمن مشفّر"
+  },
+  "cart": {
+    "empty": "سلتك فاضية حالياً",
+    "empty_subtitle": "اكتشفي منتجاتنا الفاخرة المختارة بحب لكِ ولقطتك.",
+    "browse": "تصفحي المنتجات",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "cod_fee": "رسوم الدفع عند الاستلام",
+    "total": "المجموع الكلي",
+    "remove": "إزالة",
+    "free_shipping_progress": "أنتي على بُعد {{amount}} للحصول على الشحن المجاني 🐾",
+    "free_shipping_unlocked": "حصلتي على الشحن المجاني! 🎉",
+    "items_count_one": "منتج واحد",
+    "items_count_other": "{{count}} منتجات"
+  },
+  "checkout": {
+    "title": "إتمام الشراء",
+    "contact_section": "بيانات التواصل",
+    "shipping_section": "عنوان التوصيل",
+    "payment_section": "طريقة الدفع",
+    "review_section": "ملخص الطلب",
+    "phone": "رقم الجوال",
+    "phone_placeholder": "05X XXX XXXX",
+    "name": "الاسم الكامل",
+    "name_placeholder": "اسمك الكريم",
+    "email": "البريد الإلكتروني (اختياري)",
+    "email_placeholder": "example@email.com",
+    "city": "المدينة",
+    "city_placeholder": "اختاري مدينتك",
+    "district": "الحي",
+    "district_placeholder": "اسم الحي",
+    "street": "العنوان (الشارع)",
+    "street_placeholder": "اسم الشارع",
+    "building": "المبنى / الطابق / الشقة",
+    "building_placeholder": "مثال: مبنى ٢٤، طابق ٣، شقة ٧",
+    "landmarks": "علامة مميزة (اختياري)",
+    "landmarks_placeholder": "أقرب مسجد، مدرسة، أو محل",
+    "payment_cod": "دفع عند الاستلام",
+    "payment_cod_desc": "ادفعي نقداً عند استلام طلبك (رسوم ١٠ ر.س)",
+    "payment_whatsapp": "اطلبي عبر واتساب",
+    "payment_whatsapp_desc": "نتواصل معك على واتساب لإتمام الطلب — بدون رسوم",
+    "submit": "تأكيد الطلب",
+    "agreement": "بالنقر تأكيدك، توافقين على شروط الخدمة وسياسة الخصوصية",
+    "reassurance": "لا تقلقي — حنتواصل معك على واتساب لتأكيد طلبك خلال دقائق.",
+    "cod_reassurance": "الدفع عند الاستلام — سنتواصل معك عبر واتساب لتأكيد الطلب",
+    "notes": "ملاحظات (اختياري)",
+    "notes_placeholder": "أي تفاصيل إضافية للتوصيل: علامة مميزة، رقم المبنى، وقت مناسب...",
+    "quantity": "الكمية",
+    "your_order": "طلبك"
+  },
+  "validation": {
+    "phone_invalid": "الرجاء إدخال رقم جوال سعودي صحيح",
+    "name_required": "الاسم مطلوب",
+    "name_short": "الاسم قصير جداً",
+    "city_required": "الرجاء اختيار المدينة",
+    "street_required": "العنوان مطلوب",
+    "street_short": "الرجاء إدخال عنوان كامل (٥ كلمات على الأقل)",
+    "payment_required": "الرجاء اختيار طريقة الدفع"
+  },
+  "order_confirmation": {
+    "title": "شكراً لك، طلبك في الطريق!",
+    "subtitle": "طلبك في الطريق",
+    "order_number": "رقم الطلب",
+    "next_step": "حنتواصل معك على واتساب لتأكيد طلبك خلال دقائق",
+    "open_whatsapp": "افتحي واتساب 💬",
+    "track_order": "تتبعي طلبك",
+    "continue_shopping": "إكمال التسوق"
+  },
+  "footer": {
+    "info": "معلومات",
+    "products": "منتجاتنا",
+    "help": "مساعدة",
+    "connect": "تواصل",
+    "legal": "قانوني",
+    "address": "العنوان",
+    "address_value": "الرياض، المملكة العربية السعودية",
+    "copyright": "© {{year}} هِرّة. جميع الحقوق محفوظة.",
+    "shipping": "سياسة الشحن",
+    "refunds": "الإرجاع والاسترداد",
+    "privacy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام",
+    "faq": "الأسئلة الشائعة"
+  },
+  "errors": {
+    "generic": "حصل خطأ بسيط. حاولي مرة ثانية أو راسلينا على واتساب.",
+    "not_found": "الصفحة اللي تبغينها مو موجودة",
+    "back_home": "الرجوع للرئيسية"
+  }
+}

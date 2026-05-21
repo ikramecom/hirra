@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0E5C42" />
+
+    <title>Hirra — هِرّة | منتجات قطط فاخرة في السعودية</title>
+    <meta name="description" content="هِرّة — منتجات قطط فاخرة مصممة للبيت السعودي. دفع عند الاستلام، شحن سريع، ضمان رضا ٣٠ يوم." />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Hirra — هِرّة | منتجات قطط فاخرة في السعودية" />
+    <meta property="og:description" content="منتجات قطط فاخرة مصممة للبيت السعودي." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_SA" />
+
+    <!-- Preconnects (Supabase) -->
+    <link rel="preconnect" href="https://supabase.co" />
+
+    <!-- Self-hosted fonts (place WOFF2 files in public/fonts/ — see public/fonts/README.md) -->
+    <link rel="preload" as="font" href="/fonts/ibm-plex-arabic-400.woff2" type="font/woff2" crossorigin />
+    <link rel="preload" as="font" href="/fonts/ibm-plex-arabic-600.woff2" type="font/woff2" crossorigin />
+    <link rel="preload" as="font" href="/fonts/ibm-plex-arabic-700.woff2" type="font/woff2" crossorigin />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!--
+      =========================================================
+      Marketing pixels — populated at build time via env vars
+      Leave them empty during dev. The shim below is a no-op
+      until a real pixel ID is supplied.
+      =========================================================
+    -->
+    <!-- TikTok Pixel placeholder -->
+    <!-- Snapchat Pixel placeholder -->
+    <!-- Meta Pixel placeholder -->
+    <!-- GA4 placeholder -->
+  </head>
+  <body class="bg-cream text-walnut antialiased">
+    <div id="root"></div>
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: sans-serif;">
+        يجب تفعيل JavaScript لتجربة هِرّة. <br />
+        Please enable JavaScript to experience Hirra.
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

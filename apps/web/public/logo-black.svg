@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 32" fill="none" role="img" aria-label="HIRRA">
+  <g>
+    <path d="M7 24V8M19 24V8M7 16h7" stroke="#000000" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18 9c5 1.5 8.5 5.5 8.5 11" stroke="#000000" stroke-width="2.25" stroke-linecap="round" fill="none"/>
+  </g>
+  <text
+    x="36"
+    y="22"
+    font-family="Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+    font-size="17"
+    font-weight="600"
+    letter-spacing="0.16em"
+    fill="#000000"
+  >HIRRA</text>
+</svg>

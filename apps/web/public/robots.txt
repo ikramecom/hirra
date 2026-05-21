@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-confirmation/
+
+Sitemap: https://hirra.com/sitemap.xml

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@hirra/shared": ["../../../packages/shared/src/index.ts"],
+      "@hirra/shared/*": ["../../../packages/shared/src/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": ["src", "../../packages/shared/src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

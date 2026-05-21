@@ -1,0 +1,18 @@
+{
+  "name": "Hirra — هِرّة",
+  "short_name": "Hirra",
+  "description": "منتجات قطط فاخرة في السعودية",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4ECE0",
+  "theme_color": "#0E5C42",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

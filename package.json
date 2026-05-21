@@ -1,0 +1,35 @@
+{
+  "name": "hirra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HIRRA — Premium Saudi Cat-Owner Essentials. Self-hosted React + Supabase storefront.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "build": "npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:admin": "npm run build --workspace=apps/admin",
+    "preview": "npm run preview --workspace=apps/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:push": "supabase db push",
+    "db:apply-migrations": "node scripts/apply-hirra-migrations.mjs",
+    "db:reset": "supabase db reset",
+    "fn:serve": "supabase functions serve",
+    "fn:deploy:order-confirm": "supabase functions deploy order-confirm"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "author": "Hirra",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "pg": "^8.20.0"
+  }
+}

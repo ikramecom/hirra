@@ -1,0 +1,127 @@
+{
+  "brand": {
+    "name": "Hirra",
+    "tagline": "Because your cat deserves the best."
+  },
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "bundles": "Bundles",
+    "bestsellers": "Bestsellers",
+    "gifts": "Gifts",
+    "about": "Our Story",
+    "track": "Track Order",
+    "contact": "Contact",
+    "language": "AR"
+  },
+  "announce": {
+    "free_shipping": "Free shipping on orders over SAR 200 🐾",
+    "cod_available": "Cash on delivery available in every city",
+    "fast_delivery": "Fastest delivery in Riyadh, Jeddah, Dammam — 1–3 days"
+  },
+  "cta": {
+    "add_to_cart": "Add to cart",
+    "buy_now": "Order now",
+    "checkout": "Checkout",
+    "continue_shopping": "Continue shopping",
+    "order_via_whatsapp": "Order via WhatsApp",
+    "view_product": "View product",
+    "shop_hero": "Shop the new hero 🐾",
+    "see_story": "See our story"
+  },
+  "trust": {
+    "ksa_designed": "Designed for the Saudi home",
+    "fast_shipping": "Fast shipping 1–3 days",
+    "guarantee": "30-day satisfaction guarantee",
+    "arabic_support": "WhatsApp support in Arabic",
+    "cod_label": "Cash on delivery",
+    "secure_payment": "Encrypted secure payment"
+  },
+  "cart": {
+    "empty": "Your cart is empty",
+    "empty_subtitle": "Discover our premium products chosen with love for you and your cat.",
+    "browse": "Browse products",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "cod_fee": "COD fee",
+    "total": "Total",
+    "remove": "Remove",
+    "free_shipping_progress": "You're {{amount}} away from free shipping 🐾",
+    "free_shipping_unlocked": "Free shipping unlocked! 🎉",
+    "items_count_one": "1 item",
+    "items_count_other": "{{count}} items"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "contact_section": "Contact details",
+    "shipping_section": "Shipping address",
+    "payment_section": "Payment method",
+    "review_section": "Order summary",
+    "phone": "Mobile number",
+    "phone_placeholder": "05X XXX XXXX",
+    "name": "Full name",
+    "name_placeholder": "Your full name",
+    "email": "Email (optional)",
+    "email_placeholder": "example@email.com",
+    "city": "City",
+    "city_placeholder": "Select your city",
+    "district": "District",
+    "district_placeholder": "Neighborhood name",
+    "street": "Address (street)",
+    "street_placeholder": "Street name",
+    "building": "Building / floor / apartment",
+    "building_placeholder": "e.g. Building 24, floor 3, apt 7",
+    "landmarks": "Landmark (optional)",
+    "landmarks_placeholder": "Nearest mosque, school, or shop",
+    "payment_cod": "Cash on delivery",
+    "payment_cod_desc": "Pay in cash when your order arrives (SAR 10 fee)",
+    "payment_whatsapp": "Order via WhatsApp",
+    "payment_whatsapp_desc": "We'll reach you on WhatsApp to complete the order — no fee",
+    "submit": "Confirm order",
+    "agreement": "By confirming, you agree to our Terms of Service and Privacy Policy",
+    "reassurance": "Don't worry — we'll contact you on WhatsApp to confirm your order within minutes.",
+    "cod_reassurance": "Cash on delivery — we'll reach you on WhatsApp to confirm your order",
+    "notes": "Notes (optional)",
+    "notes_placeholder": "Any extra delivery details: landmark, building number, best time…",
+    "quantity": "Quantity",
+    "your_order": "Your order"
+  },
+  "validation": {
+    "phone_invalid": "Please enter a valid Saudi mobile number",
+    "name_required": "Name is required",
+    "name_short": "Name is too short",
+    "city_required": "Please select your city",
+    "street_required": "Address is required",
+    "street_short": "Please enter a complete address (at least 5 words)",
+    "payment_required": "Please select a payment method"
+  },
+  "order_confirmation": {
+    "title": "Thank you, {{name}}! 🐾",
+    "subtitle": "Your order is on its way",
+    "order_number": "Order number",
+    "next_step": "We'll reach you on WhatsApp to confirm your order within minutes",
+    "open_whatsapp": "Open WhatsApp 💬",
+    "track_order": "Track your order",
+    "continue_shopping": "Continue shopping"
+  },
+  "footer": {
+    "info": "Info",
+    "products": "Products",
+    "help": "Help",
+    "connect": "Connect",
+    "legal": "Legal",
+    "address": "Address",
+    "address_value": "Riyadh, Saudi Arabia",
+    "copyright": "© {{year}} Hirra. All rights reserved.",
+    "shipping": "Shipping Policy",
+    "refunds": "Refunds & Returns",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "faq": "FAQ"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again or message us on WhatsApp.",
+    "not_found": "We couldn't find this page",
+    "back_home": "Back to home"
+  }
+}

@@ -1,0 +1,306 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================================
+   Self-hosted brand fonts
+   Add the WOFF2 files to /public/fonts/ — see public/fonts/README.md
+   ===================================================================== */
+
+@font-face {
+  font-family: 'IBM Plex Arabic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-arabic-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Arabic';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-arabic-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-arabic-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/cormorant-garamond-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/cormorant-garamond-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-700.woff2') format('woff2');
+}
+
+/* =====================================================================
+   Base layer
+   ===================================================================== */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html[dir='rtl'] body {
+    font-family: 'IBM Plex Arabic', system-ui, sans-serif;
+  }
+  html[dir='ltr'] body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-cream text-walnut antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  html[dir='ltr'] h1,
+  html[dir='ltr'] h2,
+  html[dir='ltr'] h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+  }
+
+  /* Larger tap targets — but not on inline emphasis spans */
+  button,
+  a {
+    @apply min-h-[44px] inline-flex items-center;
+  }
+
+  /* Tabular numerals for prices, totals, phone, postal */
+  .tabular,
+  [data-tabular] {
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+  }
+
+  /* Premium focus visibility — emerald soft ring instead of blue OS default */
+  *:focus-visible {
+    @apply outline-none;
+    box-shadow: 0 0 0 3px rgba(14, 92, 66, 0.18);
+    border-radius: 8px;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply text-base;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-cream;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-emerald/25 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-emerald/45;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-emerald/15 text-emerald-dark;
+  }
+}
+
+/* =====================================================================
+   Component utilities
+   ===================================================================== */
+
+@layer components {
+  .container-content {
+    @apply mx-auto max-w-content px-5 sm:px-6 lg:px-10;
+  }
+
+  .container-prose {
+    @apply mx-auto max-w-prose;
+  }
+
+  .btn-base {
+    @apply inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 ease-soft;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .heading-display {
+    @apply font-display font-medium tracking-tight;
+  }
+  html[dir='rtl'] .heading-display {
+    @apply font-arabic font-bold;
+  }
+
+  /* Section padding rhythm */
+  .section-y {
+    @apply py-16 md:py-24 lg:py-28;
+  }
+  .section-y-tight {
+    @apply py-12 md:py-16;
+  }
+
+  /* Premium hairline divider */
+  .hairline {
+    @apply h-px w-full bg-walnut/10;
+  }
+
+  /* Pill chip used in trust pills + city zone label */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-walnut/10 bg-whisper/80 px-3 py-1 text-xs font-semibold text-walnut/80;
+  }
+
+  /* Premium link underline — animated brass */
+  .link-underline {
+    @apply relative font-semibold text-walnut/80 hover:text-walnut transition-colors;
+  }
+  .link-underline::after {
+    content: '';
+    @apply absolute inset-x-0 -bottom-0.5 h-px scale-x-0 origin-start bg-current transition-transform duration-300 ease-out;
+  }
+  .link-underline:hover::after {
+    @apply scale-x-100;
+  }
+
+  /* Image cover that hides until loaded — pairs with onLoad fade-in */
+  .img-fade {
+    animation: fade-in 0.5s ease-out both;
+  }
+
+  /* Skeleton — soft shimmering placeholder */
+  .skeleton {
+    @apply bg-sand/40 overflow-hidden relative;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 bg-shimmer-cream bg-[length:200%_100%] animate-shimmer;
+  }
+}
+
+/* =====================================================================
+   Utility helpers
+   ===================================================================== */
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .pt-safe {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Hide content past the first line for clean editorial truncation */
+  .clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+/* =====================================================================
+   Swiper bridges
+   ---------------------------------------------------------------------
+   Critical: the PDP gallery's Swiper must NEVER grow beyond its parent
+   wrapper. We pin every internal element to fill exactly 100% of the
+   parent and disable any transforms/animations on the contained <img>
+   so a layout pass can't trigger a sizing feedback loop.
+   ===================================================================== */
+.hirra-swiper,
+.hirra-swiper .swiper-wrapper,
+.hirra-swiper .swiper-slide {
+  height: 100%;
+  max-height: 100%;
+  width: 100%;
+}
+
+.hirra-swiper .swiper-slide {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.hirra-swiper .swiper-slide > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+.hirra-swiper .swiper-button-next,
+.hirra-swiper .swiper-button-prev {
+  color: #0e5c42;
+}
+
+.hirra-swiper .swiper-pagination-bullet-active {
+  background-color: #0e5c42;
+}
+
+/* Thumbnail strip — keep each tile a tight, fixed square */
+.hirra-thumbs .swiper-slide {
+  height: auto;
+}
+.hirra-thumbs .swiper-slide > div > img {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
