@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HirraMark } from '@/components/HirraMark';
+import { RiyanaluxeMark } from '@/components/RiyanaluxeMark';
 import { setApiKey } from '@/lib/api';
 
 export function LoginPage() {
@@ -28,7 +28,7 @@ export function LoginPage() {
     <div className="min-h-screen grid place-items-center bg-cream px-4">
       <div className="w-full max-w-md rounded-card border border-walnut/10 bg-whisper p-8 shadow-card">
         <div className="flex items-center gap-3 text-emerald mb-8">
-          <HirraMark className="h-10 w-10" />
+          <RiyanaluxeMark className="h-10 w-10" />
           <div>
             <h1 className="font-display text-2xl font-semibold tracking-[0.1em] text-walnut">
               HIRRA

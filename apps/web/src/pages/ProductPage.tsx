@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Star, ArrowRight, Truck, ShieldCheck, MessageSquare } from 'lucide-react';
+import { Star, ArrowRight, Truck, Users, Banknote, Gift } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import { Accordion } from '@/components/ui/Accordion';
@@ -12,31 +12,45 @@ import { GuaranteePromise } from '@/components/common/GuaranteePromise';
 import { Eyebrow } from '@/components/common/Eyebrow';
 import { PageLoader } from '@/components/common/Skeleton';
 
-import { useProduct } from '@/hooks/useProducts';
 import { useReviews } from '@/hooks/useReviews';
+import { useResolvedProduct } from '@/hooks/useResolvedCatalog';
 import { useCartStore } from '@/store/cart';
 import { track } from '@/lib/tracking';
-import { formatSAR } from '@hirra/shared';
+import { formatMAD } from '@hirra/shared';
+import {
+  getProductImageFallbackUrl,
+  HERO_SLUG,
+  isBundleSlug,
+  resolveCanonicalBundleSlug,
+} from '@/lib/product-utils';
+import type { StoreLocale } from '@/i18n';
+import { productCopy } from '@/lib/brand-copy';
+import { RIYANALUXE_ASSETS } from '@/lib/assets';
+import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
+import { PremiumBadge } from '@/components/brand/PremiumBadge';
+import { SectionHeader } from '@/components/brand/SectionHeader';
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation();
-  const locale = i18n.language as 'ar' | 'en';
+  const locale = (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
   const navigate = useNavigate();
 
-  const { data: product, isLoading } = useProduct(slug);
+  const { product, canonicalSlug, isKnownSlug, isLoading, isError } = useResolvedProduct(slug);
   const { data: reviews = [] } = useReviews(product?.id);
 
+  const clear = useCartStore((s) => s.clear);
   const addLine = useCartStore((s) => s.addLine);
-  const openDrawer = useCartStore((s) => s.openDrawer);
-
-  const [variantId, setVariantId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (product?.variants?.length && !variantId) {
-      setVariantId(product.variants[0].id);
+    if (slug && isBundleSlug(slug)) {
+      const bundleTarget = resolveCanonicalBundleSlug(slug);
+      if (bundleTarget) navigate(`/bundles/${bundleTarget}`, { replace: true });
+      return;
     }
-  }, [product, variantId]);
+    if (!slug || !canonicalSlug || slug === canonicalSlug) return;
+    navigate(`/products/${canonicalSlug}`, { replace: true });
+  }, [slug, canonicalSlug, navigate]);
 
   useEffect(() => {
     if (product) {
@@ -44,46 +58,70 @@ export default function ProductPage() {
         content_ids: [product.id],
         content_name: product.name_en,
         content_type: 'product',
-        value: product.price_sar,
-        currency: 'SAR',
+        value: Number(product.price_sar) || 0,
+        currency: 'MAD',
       });
     }
   }, [product]);
+
+  if (slug && isBundleSlug(slug)) {
+    return <PageLoader />;
+  }
 
   if (isLoading) {
     return <PageLoader />;
   }
 
-  if (!product) {
+  if (!product || !isKnownSlug) {
     return (
-      <div className="container-content py-20 text-center text-walnut/70 space-y-4">
-        <p className="text-lg">{t('errors.not_found')}</p>
-        <Button to="/products" variant="secondary">
-          {locale === 'ar' ? 'تصفّحي المجموعة' : 'Browse the collection'}
-        </Button>
+      <div className="container-content py-20 text-center text-pearl/70 space-y-6">
+        <p className="text-lg font-medium text-pearl">
+          {isError ? t('errors.generic') : t('errors.not_found')}
+        </p>
+        <p className="text-sm text-smoke max-w-md mx-auto">
+          {locale === 'ar'
+            ? 'لم نعثر على هذه القطعة. جرّب المجموعة أو تواصل معنا على واتساب.'
+            : 'Cette pièce est introuvable. Parcourez la collection ou écrivez-nous.'}
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Button to="/products" variant="secondary">
+            {locale === 'ar' ? 'تصفح المجموعة' : 'Voir la collection'}
+          </Button>
+          <Button to={`/products/${HERO_SLUG}`} variant="gold">
+            {locale === 'ar' ? 'المبخرة لوكس' : 'Mabkhara Luxe'}
+          </Button>
+        </div>
       </div>
     );
   }
 
+  const galleryImages = product.images;
   const name = locale === 'ar' ? product.name_ar : product.name_en;
   const subtitle = locale === 'ar' ? product.subtitle_ar : product.subtitle_en;
-  const description = locale === 'ar' ? product.description_ar : product.description_en;
-  const primaryImage = product.images.find((i) => i.is_primary) ?? product.images[0];
-  const selectedVariant = product.variants.find((v) => v.id === variantId);
-  const hasDiscount =
-    product.compare_at_price_sar && product.compare_at_price_sar > product.price_sar;
+  const description =
+    (locale === 'ar' ? product.description_ar : product.description_en) ||
+    (locale === 'ar'
+      ? 'قطعة من مجموعة ريانا لوكس — صُممت للدار المغربية بأناقة معاصرة.'
+      : 'Une pièce RIYANALUXE — conçue pour la maison marocaine.');
+  const primaryImage =
+    galleryImages.find((i) => i.is_primary) ?? galleryImages[0];
+  const displayImageUrl =
+    primaryImage?.url ?? getProductImageFallbackUrl(product.slug);
+  const isMabkhara = product.slug === HERO_SLUG || product.is_hero;
+  const copy = productCopy(locale, isMabkhara);
 
-  const handleAdd = (buyNow: boolean) => {
+  const handleOrderNow = () => {
+    clear();
     addLine({
       product_id: product.id,
-      product_variant_id: variantId,
+      product_variant_id: null,
       name_ar: product.name_ar,
       name_en: product.name_en,
-      variant_name_ar: selectedVariant?.name_ar ?? null,
-      variant_name_en: selectedVariant?.name_en ?? null,
-      image_url: primaryImage?.url ?? null,
+      variant_name_ar: null,
+      variant_name_en: null,
+      image_url: displayImageUrl,
       slug: product.slug,
-      unit_price_sar: product.price_sar,
+      unit_price_sar: Number(product.price_sar) || 0,
       quantity: 1,
     });
 
@@ -91,13 +129,12 @@ export default function ProductPage() {
       content_ids: [product.id],
       content_name: product.name_en,
       content_type: 'product',
-      value: product.price_sar,
-      currency: 'SAR',
+      value: Number(product.price_sar) || 0,
+      currency: 'MAD',
       num_items: 1,
     });
 
-    if (buyNow) navigate('/checkout');
-    else openDrawer();
+    navigate('/checkout');
   };
 
   const sharedFaq = [
@@ -106,15 +143,15 @@ export default function ProductPage() {
         locale === 'ar' ? 'متى يوصلني الطلب؟' : 'When does my order arrive?',
       answer:
         locale === 'ar'
-          ? '١-٢ يوم في الرياض، ٢-٣ أيام في جدة والدمام، ٣-٥ أيام في باقي المدن.'
-          : '1–2 days in Riyadh, 2–3 days in Jeddah/Dammam, 3–5 days for other cities.',
+          ? '2-3 أيام للدار البيضاء والرباط، 3-5 أيام لباقي المدن المغاربية.'
+          : '2–3 jours Casa/Rabat, 4–5 jours ailleurs au Maghreb.',
     },
     {
       question: locale === 'ar' ? 'ضمان الإرجاع؟' : 'Return guarantee?',
       answer:
         locale === 'ar'
-          ? 'ضمان رضا ٣٠ يوم — لو ما عجبكِ، نستلم المنتج ونرجع لكِ فلوسكِ كاملة.'
-          : '30-day satisfaction guarantee — if it’s not right we collect it and refund you in full.',
+          ? 'ضمان رضا 14 يوم — استبدال أو استرجاع بعد التواصل معنا.'
+          : 'Satisfait 14 jours — échange ou remboursement après contact.',
     },
     {
       question: locale === 'ar' ? 'كيف أتواصل معكم؟' : 'How do I reach you?',
@@ -132,11 +169,10 @@ export default function ProductPage() {
         <meta name="description" content={subtitle ?? name} />
       </Helmet>
 
-      {/* HERO ============================================================ */}
       <section className="container-content pt-6 md:pt-10 pb-10 md:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-8 lg:gap-14">
           <div>
-            <ImageGallery images={product.images} altFallback={name} locale={locale} />
+            <ImageGallery src={displayImageUrl} alt={name} />
           </div>
 
           <div className="space-y-6">
@@ -144,40 +180,29 @@ export default function ProductPage() {
               <Eyebrow>
                 {product.is_hero
                   ? locale === 'ar' ? 'البطلة' : 'The hero'
-                  : locale === 'ar' ? 'هِرّة' : 'Hirra'}
+                  : locale === 'ar' ? 'ريانا لوكس' : 'RIYANALUXE'}
               </Eyebrow>
 
-              <h1 className="text-h1 heading-display text-walnut text-balance">
+              <h1 className="text-h1 heading-display text-pearl text-balance">
                 {name}
               </h1>
 
               {subtitle ? (
-                <p className="text-lg text-walnut/70 leading-relaxed text-pretty">
+                <p className="text-lg text-champagne/90 leading-relaxed text-pretty">
                   {subtitle}
                 </p>
               ) : null}
             </div>
 
-            {/* Price + reviews grouped — anchored under the title for one
-                clear glance answering "how much, how loved". */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
-              <div className="flex items-baseline gap-2 tabular">
-                <span className="text-3xl font-bold text-emerald">
-                  {formatSAR(product.price_sar, locale)}
+              <div className="flex items-baseline gap-3 tabular">
+                <span className="text-3xl font-display text-gold tracking-wide">
+                  {formatMAD(Number(product.price_sar) || 0, locale)}
                 </span>
-                {hasDiscount ? (
-                  <span className="text-base text-walnut/40 line-through">
-                    {formatSAR(product.compare_at_price_sar!, locale)}
-                  </span>
-                ) : null}
-                {hasDiscount ? (
-                  <span className="text-xs font-bold text-signal bg-signal/10 px-2 py-0.5 rounded-full">
-                    −
-                    {formatSAR(
-                      product.compare_at_price_sar! - product.price_sar,
-                      locale,
-                    )}
-                  </span>
+                {isMabkhara ? (
+                  <PremiumBadge tone="pearl">
+                    {locale === 'ar' ? 'تغليف هدية' : 'Cadeau'}
+                  </PremiumBadge>
                 ) : null}
               </div>
 
@@ -187,109 +212,96 @@ export default function ProductPage() {
                     <Star key={s} className="h-4 w-4 fill-current" />
                   ))}
                 </div>
-                <span className="font-semibold text-walnut">4.8</span>
-                <span className="text-walnut/55">
+                <span className="font-semibold text-pearl">4.8</span>
+                <span className="text-pearl/55">
                   ({reviews.length}+ {locale === 'ar' ? 'تقييم' : 'reviews'})
                 </span>
               </div>
             </div>
 
-            {/* Variants */}
-            {product.variants.length > 0 ? (
-              <div className="space-y-2.5">
-                <p className="text-sm font-semibold text-walnut">
-                  {locale === 'ar' ? 'الخيار' : 'Choose option'}
-                  {selectedVariant
-                    ? ` · ${
-                        locale === 'ar'
-                          ? selectedVariant.name_ar
-                          : selectedVariant.name_en
-                      }`
-                    : ''}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {product.variants.map((v) => (
-                    <button
-                      key={v.id}
-                      type="button"
-                      onClick={() => setVariantId(v.id)}
-                      className={`px-4 py-2 rounded-xl border-2 text-sm font-semibold transition ${
-                        variantId === v.id
-                          ? 'border-emerald bg-emerald text-cream'
-                          : 'border-sand bg-whisper text-walnut hover:border-emerald'
-                      }`}
-                    >
-                      {locale === 'ar' ? v.name_ar : v.name_en}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            {copy.giftNote ? (
+              <p className="flex items-center gap-2 text-sm text-champagne/90">
+                <Gift className="h-4 w-4 text-gold/80" strokeWidth={1.25} />
+                {copy.giftNote}
+              </p>
             ) : null}
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="pt-1">
               <Button
-                onClick={() => handleAdd(true)}
+                onClick={handleOrderNow}
+                variant="gold"
                 size="xl"
                 fullWidth
                 rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
               >
-                {t('cta.buy_now')}
-              </Button>
-              <Button
-                onClick={() => handleAdd(false)}
-                variant="secondary"
-                size="xl"
-                fullWidth
-              >
-                {t('cta.add_to_cart')}
+                {copy.buyLabel}
               </Button>
             </div>
 
-            {/* Quick trust strip */}
-            <div className="grid grid-cols-3 gap-3 pt-5 border-t border-walnut/10 text-center text-xs">
+            <div className="grid grid-cols-3 gap-3 pt-5 border-t border-gold/10 text-center text-xs">
               <div className="space-y-1.5">
-                <Truck className="h-5 w-5 mx-auto text-emerald" />
-                <p className="font-semibold text-walnut leading-tight">
-                  {t('trust.fast_shipping')}
+                <Users className="h-5 w-5 mx-auto text-gold" strokeWidth={1.25} />
+                <p className="font-semibold text-pearl leading-tight">
+                  {t('trust.happy_customers')}
                 </p>
               </div>
               <div className="space-y-1.5">
-                <ShieldCheck className="h-5 w-5 mx-auto text-emerald" />
-                <p className="font-semibold text-walnut leading-tight">
-                  {t('trust.guarantee')}
+                <Truck className="h-5 w-5 mx-auto text-gold" strokeWidth={1.25} />
+                <p className="font-semibold text-pearl leading-tight">
+                  {t('trust.nationwide_delivery')}
                 </p>
               </div>
               <div className="space-y-1.5">
-                <MessageSquare className="h-5 w-5 mx-auto text-emerald" />
-                <p className="font-semibold text-walnut leading-tight">
-                  {t('trust.arabic_support')}
+                <Banknote className="h-5 w-5 mx-auto text-gold" strokeWidth={1.25} />
+                <p className="font-semibold text-pearl leading-tight">
+                  {t('trust.cod_at_delivery')}
                 </p>
               </div>
             </div>
 
-            {/* Description (collapsible feel via prose styling) */}
-            {description ? (
-              <div className="pt-5 border-t border-walnut/10">
-                <p className="text-walnut/80 leading-relaxed whitespace-pre-line text-pretty">
-                  {description}
-                </p>
-              </div>
-            ) : null}
+            <div className="pt-5 border-t border-gold/10">
+              <p className="text-champagne/90 leading-relaxed whitespace-pre-line text-pretty">
+                {description}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* DETAILS / FAQ ACCORDION ========================================== */}
-      <section className="bg-whisper">
+      {isMabkhara ? (
+        <section className="border-t border-gold/10 bg-ink/30">
+          <div className="container-content section-y-tight grid md:grid-cols-2 gap-10 items-center">
+            <div className="frame-gold rounded-hero overflow-hidden aspect-[4/3]">
+              <ResponsiveImage
+                src={RIYANALUXE_ASSETS.packaging}
+                alt={locale === 'ar' ? 'تغليف ريانا لوكس' : 'Emballage RIYANALUXE'}
+                aspectClassName="h-full w-full"
+              />
+            </div>
+            <SectionHeader
+              eyebrow={locale === 'ar' ? 'التقديم' : 'Présentation'}
+              title={
+                locale === 'ar' ? 'علبة تُقدَّم كهدية' : 'Un emballage offert'
+              }
+              lead={
+                locale === 'ar'
+                  ? 'صندوق أسود مطفي، شريط ذهبي، وبطاقة ترحيب — مثالي للعيد والزيارات والمناسبات.'
+                  : 'Boîte noire mate, ruban doré, carte de bienvenue — idéal pour l’Aïd et les réceptions.'
+              }
+            />
+          </div>
+        </section>
+      ) : null}
+
+      <section className="bg-charcoal/40 border-t border-gold/10">
         <div className="container-content section-y-tight">
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="text-center space-y-2">
               <Eyebrow as="div" className="justify-center">
                 {locale === 'ar' ? 'تفاصيل' : 'Details'}
               </Eyebrow>
-              <h2 className="text-h2 heading-display text-walnut">
-                {locale === 'ar' ? 'كل اللي تبغين تعرفينه' : 'Everything you’d want to know'}
+              <h2 className="text-h2 heading-display text-pearl">
+                {locale === 'ar' ? 'أسئلة مهمة قبل الطلب' : 'Questions avant de commander'}
               </h2>
             </div>
             <Accordion items={sharedFaq} />
@@ -297,7 +309,6 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* REVIEWS ========================================================= */}
       {reviews.length > 0 ? (
         <section className="container-content section-y-tight">
           <div className="space-y-8">
@@ -305,15 +316,13 @@ export default function ProductPage() {
               <Eyebrow as="div" className="justify-center">
                 {locale === 'ar' ? 'الآراء' : 'Real reviews'}
               </Eyebrow>
-              <h2 className="text-h2 heading-display text-walnut">
-                {locale === 'ar' ? 'كلام صادق من بيوت سعودية' : 'Honest words from Saudi homes'}
-              </h2>
+              <h2 className="text-h2 heading-display text-pearl">{copy.reviewsTitle}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
               {reviews.map((r) => (
                 <article
                   key={r.id}
-                  className="bg-whisper rounded-card border border-walnut/10 p-6 space-y-3 shadow-card"
+                  className="luxury-card p-6 space-y-3"
                 >
                   <div className="flex items-center gap-0.5 text-gold">
                     {Array.from({ length: r.rating }).map((_, i) => (
@@ -321,14 +330,14 @@ export default function ProductPage() {
                     ))}
                   </div>
                   {r.title_ar ? (
-                    <h4 className="font-semibold text-walnut heading-display">
+                    <h4 className="font-semibold text-pearl heading-display">
                       {r.title_ar}
                     </h4>
                   ) : null}
-                  <p className="text-walnut/80 leading-relaxed text-pretty">
+                  <p className="text-champagne/90 leading-relaxed text-pretty">
                     {r.body_ar}
                   </p>
-                  <p className="text-sm text-walnut/55 font-semibold pt-1 border-t border-walnut/10">
+                  <p className="text-sm text-smoke font-medium pt-1 border-t border-gold/10">
                     — {r.customer_name}
                     {r.customer_city ? `, ${r.customer_city}` : ''}
                   </p>
@@ -339,15 +348,14 @@ export default function ProductPage() {
         </section>
       ) : null}
 
-      {/* PROMISE STRIP =================================================== */}
       <section className="container-content pb-20 md:pb-24">
         <GuaranteePromise />
       </section>
 
       <StickyMobileCTA
-        label={t('cta.buy_now')}
-        onClick={() => handleAdd(true)}
-        price={formatSAR(product.price_sar, locale)}
+        label={copy.buyLabel}
+        onClick={handleOrderNow}
+        price={formatMAD(Number(product.price_sar) || 0, locale)}
       />
     </>
   );

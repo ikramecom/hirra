@@ -23,11 +23,11 @@ type AsAnchor = CommonProps & AnchorHTMLAttributes<HTMLAnchorElement> & { href: 
 export type ButtonProps = AsButton | AsRouterLink | AsAnchor;
 
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-emerald text-cream hover:bg-emerald-dark active:bg-emerald-dark',
-  secondary: 'bg-cream text-emerald border-2 border-emerald hover:bg-emerald hover:text-cream',
-  ghost: 'bg-transparent text-emerald hover:bg-emerald/10',
+  primary: 'bg-gold text-obsidian hover:bg-gold-light shadow-glow',
+  secondary: 'bg-transparent text-pearl border border-gold/40 hover:border-gold hover:bg-gold/5',
+  ghost: 'bg-transparent text-champagne hover:text-pearl hover:bg-pearl/5',
   whatsapp: 'bg-[#25D366] text-white hover:bg-[#1FAA52]',
-  gold: 'bg-gold text-walnut hover:bg-gold-light',
+  gold: 'bg-gradient-to-r from-gold to-gold-light text-obsidian font-bold',
 };
 
 const SIZES: Record<Size, string> = {
@@ -63,6 +63,29 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(function Button(props
   );
 
   if ('to' in rest && rest.to !== undefined) {
+    const to = rest.to;
+    const toStr = typeof to === 'string' ? to : '';
+
+    if (toStr.startsWith('#')) {
+      const sectionId = toStr.slice(1);
+      return (
+        <a
+          ref={ref as React.Ref<HTMLAnchorElement>}
+          href={toStr}
+          className={classes}
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById(sectionId)?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }}
+        >
+          {content}
+        </a>
+      );
+    }
+
     return (
       <Link
         ref={ref as React.Ref<HTMLAnchorElement>}

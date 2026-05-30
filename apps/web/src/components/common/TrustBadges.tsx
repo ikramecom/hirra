@@ -10,7 +10,7 @@ interface TrustBadgesProps {
 export function TrustBadges({ variant = 'row', className }: TrustBadgesProps) {
   const { t } = useTranslation();
   const items = [
-    { icon: Sparkles, label: t('trust.ksa_designed') },
+    { icon: Sparkles, label: t('trust.maghreb_crafted') },
     { icon: Truck, label: t('trust.fast_shipping') },
     { icon: ShieldCheck, label: t('trust.guarantee') },
     { icon: MessageSquare, label: t('trust.arabic_support') },

@@ -13,14 +13,6 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-/**
- * App shell.
- *
- * - Announcement → Header → main → Footer
- * - Drawers (mobile nav, cart, WhatsApp button) live above the shell.
- * - Subtle page-transition fade keyed on the route path so SPA navigations
- *   feel intentional rather than abrupt.
- */
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
@@ -31,11 +23,16 @@ export default function Layout({ children }: LayoutProps) {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream">
+    <div className="min-h-screen flex flex-col bg-obsidian">
       <AnnouncementBar />
       <Header />
       <MobileNav />
-      <main className="flex-1">{children}</main>
+      <main
+        className="flex-1"
+        data-page={location.pathname === '/' ? 'home' : 'store'}
+      >
+        {children}
+      </main>
       <Footer />
       <WhatsAppButton />
       <CartDrawer />

@@ -4,4 +4,4 @@ Disallow: /checkout
 Disallow: /cart
 Disallow: /order-confirmation/
 
-Sitemap: https://hirra.com/sitemap.xml
+Sitemap: https://riyanaluxe.ma/sitemap.xml

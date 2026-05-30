@@ -18,11 +18,11 @@ export function SectionShell({
   return (
     <section
       id={id}
-      className={`section-shell section-shell-${variant} relative overflow-hidden py-24 sm:py-28 lg:py-32 ${className}`}
+      className={`section-shell section-shell-${variant} relative overflow-hidden ${className}`}
       aria-labelledby={labelledBy}
     >
       {variant !== 'cta' ? (
-        <div className="section-ambient pointer-events-none absolute inset-0 opacity-70" aria-hidden />
+        <div className="section-ambient pointer-events-none absolute inset-0 opacity-80" aria-hidden />
       ) : null}
       <div className="container-content relative">{children}</div>
     </section>

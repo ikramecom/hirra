@@ -28,7 +28,7 @@ export function useReviews(productId: string | undefined) {
         if (rows.length === 0) return getFallbackReviewsForProduct(productId);
         return rows;
       } catch (err) {
-        console.warn(`[hirra] useReviews(${productId}) falling back to local data:`, err);
+        console.warn(`[riyanaluxe] useReviews(${productId}) falling back to local data:`, err);
         return getFallbackReviewsForProduct(productId);
       }
     },

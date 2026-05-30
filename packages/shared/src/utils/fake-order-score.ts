@@ -11,8 +11,8 @@ export function scoreFakeOrder(
   const flags: string[] = [];
   let score = 0;
 
-  if (!normalizedPhone.startsWith('+9665')) {
-    flags.push('invalid_saudi_mobile');
+  if (!/^\+212[67]\d{8}$/.test(normalizedPhone)) {
+    flags.push('invalid_moroccan_mobile');
     score += 40;
   }
 
@@ -27,7 +27,7 @@ export function scoreFakeOrder(
     score += 30;
   }
 
-  const hour = (new Date().getUTCHours() + 3) % 24; // Riyadh local hour
+  const hour = (new Date().getUTCHours() + 1) % 24; // Morocco (UTC+1) approximate
   if (hour >= 1 && hour <= 5) {
     flags.push('late_night_order');
     score += 10;

@@ -1,76 +1,81 @@
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
+import { SectionHeader } from '@/components/brand/SectionHeader';
+import { BRAND, buildWhatsAppLink } from '@hirra/shared';
+import type { StoreLocale } from '@/i18n';
+
 export default function RefundPolicyPage() {
   const { t, i18n } = useTranslation();
-  const isAr = i18n.language === 'ar';
+  const locale = (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
+
   return (
     <>
       <Helmet>
-        <title>{t('footer.refunds')} — {t('brand.name')}</title>
+        <title>
+          {t('footer.refunds')} — {t('brand.name')}
+        </title>
       </Helmet>
-      <article className="container-content py-12 md:py-16 max-w-3xl">
-        <h1 className="text-3xl font-bold text-walnut heading-display mb-6">{t('footer.refunds')}</h1>
-
-        {isAr ? (
-          <div className="space-y-4 text-walnut/80 leading-relaxed">
-            <p>هِرّة تقدّم <strong>ضمان رضا ٣٠ يوم</strong> لكل المنتجات.</p>
-
-            <h2 className="text-xl font-bold text-walnut">ما هو ضمان الرضا؟</h2>
-            <p>
-              لو لأي سبب ما عجبك المنتج خلال ٣٠ يوم من استلامه، تقدري ترجعينه ونرجع لك فلوسك كاملة. ما نسأل أسئلة. ما نضيع وقتك.
-            </p>
-
-            <h2 className="text-xl font-bold text-walnut">شروط الإرجاع</h2>
-            <ul className="list-disc ps-6 space-y-1">
-              <li>أن يكون الإرجاع خلال ٣٠ يوم من تاريخ الاستلام.</li>
-              <li>أن يكون المنتج في حالة جيدة (يمكن تكوني جربتيه — مافي مشكلة).</li>
-              <li>مع التغليف الأصلي إن أمكن (مش شرط).</li>
-            </ul>
-
-            <h2 className="text-xl font-bold text-walnut">كيف تطلبين الإرجاع؟</h2>
-            <ol className="list-decimal ps-6 space-y-1">
-              <li>راسلينا على واتساب مع رقم طلبك وسبب الإرجاع (اختياري).</li>
-              <li>حنرتب لك استلام المنتج من بيتك (مجاناً).</li>
-              <li>بعد استلامه ومراجعته، نرجع لك المبلغ كاملاً خلال ٢-٧ أيام عمل.</li>
-            </ol>
-
-            <h2 className="text-xl font-bold text-walnut">طريقة الاسترجاع</h2>
-            <p>الاسترجاع يكون عبر تحويل بنكي إلى الحساب اللي تختارينه (مدى، STC Pay، أو بنك آخر).</p>
-
-            <h2 className="text-xl font-bold text-walnut">المنتجات التالفة أو الخاطئة</h2>
-            <p>لو وصلك المنتج تالف أو غير اللي طلبتيه، راسلينا على واتساب فوراً. حنبدلك المنتج مجاناً (بدون أي رسوم).</p>
-          </div>
-        ) : (
-          <div className="space-y-4 text-walnut/80 leading-relaxed">
-            <p>Hirra offers a <strong>30-day satisfaction guarantee</strong> on all products.</p>
-
-            <h2 className="text-xl font-bold text-walnut">What does the guarantee cover?</h2>
-            <p>
-              If for any reason you don’t love the product within 30 days of delivery, return it for a full refund. No questions. No hassle.
-            </p>
-
-            <h2 className="text-xl font-bold text-walnut">Conditions</h2>
-            <ul className="list-disc ps-6 space-y-1">
-              <li>Return within 30 days of delivery.</li>
-              <li>Product in good condition (it’s OK if you used it).</li>
-              <li>Original packaging if possible (not required).</li>
-            </ul>
-
-            <h2 className="text-xl font-bold text-walnut">How to return</h2>
-            <ol className="list-decimal ps-6 space-y-1">
-              <li>WhatsApp us with your order number and reason (optional).</li>
-              <li>We’ll arrange a free pickup from your home.</li>
-              <li>After we receive and inspect the item, we refund you within 2–7 business days.</li>
-            </ol>
-
-            <h2 className="text-xl font-bold text-walnut">Refund method</h2>
-            <p>Bank transfer to your preferred account (Mada, STC Pay, or any other bank).</p>
-
-            <h2 className="text-xl font-bold text-walnut">Damaged or wrong items</h2>
-            <p>If you received a damaged or wrong item, WhatsApp us immediately. We’ll replace it for free.</p>
-          </div>
-        )}
+      <article className="container-content section-y-tight max-w-3xl">
+        <SectionHeader title={t('footer.refunds')} className="mb-8" />
+        <div className="luxury-card p-6 md:p-8 space-y-6 text-champagne/90 leading-relaxed">
+          {locale === 'ar' ? (
+            <>
+              <p>
+                ريانا لوكس تقدّم <strong className="text-pearl">ضمان رضا 14 يوماً</strong> على جميع المنتجات.
+              </p>
+              <section className="space-y-2">
+                <h2 className="text-lg font-semibold text-pearl">شروط الإرجاع</h2>
+                <ul className="list-disc ps-6 space-y-1 text-smoke">
+                  <li>خلال 14 يوماً من التسليم</li>
+                  <li>المنتج في حالة جيدة</li>
+                  <li>التغليف الأصلي مفضّل وليس إلزامياً</li>
+                </ul>
+              </section>
+              <section className="space-y-2">
+                <h2 className="text-lg font-semibold text-pearl">كيف تطلب الإرجاع؟</h2>
+                <ol className="list-decimal ps-6 space-y-1 text-smoke">
+                  <li>راسِلنا على واتساب مع رقم الطلبية</li>
+                  <li>نرتّب استرجاع القطعة أو نرشدك</li>
+                  <li>استرداد كامل خلال 3-7 أيام عمل بعد المراجعة</li>
+                </ol>
+              </section>
+              <p className="text-smoke">
+                للاستفسار:{' '}
+                <a href={`mailto:${BRAND.email}`} className="text-gold hover:underline">
+                  {BRAND.email}
+                </a>
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                RIYANALUXE offre une <strong className="text-pearl">garantie satisfait 14 jours</strong>.
+              </p>
+              <section className="space-y-2">
+                <h2 className="text-lg font-semibold text-pearl">Conditions</h2>
+                <ul className="list-disc ps-6 space-y-1 text-smoke">
+                  <li>Dans les 14 jours suivant la réception</li>
+                  <li>Produit en bon état</li>
+                  <li>Emballage d’origine apprécié</li>
+                </ul>
+              </section>
+              <section className="space-y-2">
+                <h2 className="text-lg font-semibold text-pearl">Procédure</h2>
+                <ol className="list-decimal ps-6 space-y-1 text-smoke">
+                  <li>Contactez-nous sur WhatsApp avec le n° de commande</li>
+                  <li>Nous organisons la suite</li>
+                  <li>Remboursement sous 3–7 jours ouvrés</li>
+                </ol>
+              </section>
+              <p className="text-smoke">
+                <a href={`mailto:${BRAND.email}`} className="text-gold hover:underline">
+                  {BRAND.email}
+                </a>
+              </p>
+            </>
+          )}
+        </div>
       </article>
     </>
   );

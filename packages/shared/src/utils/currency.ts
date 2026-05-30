@@ -1,21 +1,26 @@
+import { normalizeWesternDigits } from './digits';
+
 /**
- * Format a SAR amount for display.
- * Always uses ASCII digits in the number itself (Saudi convention for prices)
- * but renders the currency label in the requested locale.
+ * Format MAD for display (stored in DB `price_sar` column during Maghreb rollout).
+ * Moroccan retail convention: Western numerals + «درهم» (AR) or «MAD» (FR).
  */
-export function formatSAR(amount: number, locale: 'ar' | 'en' = 'ar'): string {
+export function formatMAD(amount: number, locale: 'ar' | 'fr' | 'en' = 'ar'): string {
   const rounded = Number.isInteger(amount) ? amount : Math.round(amount * 100) / 100;
-  const formatted = rounded.toLocaleString('en-US', {
+  const formatted = rounded.toLocaleString('fr-FR', {
     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
     maximumFractionDigits: 2,
   });
-  return locale === 'ar' ? `${formatted} ر.س` : `SAR ${formatted}`;
+  if (locale === 'ar') return normalizeWesternDigits(`${formatted} درهم`);
+  if (locale === 'fr') return `${formatted} MAD`;
+  return `${formatted} MAD`;
 }
 
-/**
- * Convert a Western-digit string to Arabic-Indic digits (for storytelling copy)
- */
+/** @deprecated Use formatMAD — legacy name */
+export function formatSAR(amount: number, locale: 'ar' | 'en' = 'ar'): string {
+  return formatMAD(amount, locale === 'en' ? 'en' : 'ar');
+}
+
+/** @deprecated Use normalizeWesternDigits — RIYANALUXE uses Western numerals in Arabic UI */
 export function toArabicDigits(input: string | number): string {
-  const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-  return String(input).replace(/[0-9]/g, (d) => arabicDigits[parseInt(d, 10)]);
+  return normalizeWesternDigits(input);
 }

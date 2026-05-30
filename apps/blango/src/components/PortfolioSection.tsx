@@ -1,91 +1,93 @@
 import { motion } from 'framer-motion';
+import { ArrowUpRight, Target, TrendingUp } from 'lucide-react';
+import { getStoreDomain } from '@/lib/portfolio-assets';
 import { PORTFOLIO } from '@/lib/sections-data';
+import { PortfolioPreview } from './PortfolioPreview';
 import { SectionHeader } from './SectionHeader';
 import { SectionShell } from './SectionShell';
 
-interface PortfolioMockupProps {
-  accent: string;
-  variant: 'landing' | 'websites' | 'custom';
+interface PortfolioSectionProps {
+  embedded?: boolean;
 }
 
-function DesktopFrame({ accent, variant }: PortfolioMockupProps) {
+export function PortfolioSection({ embedded = false }: PortfolioSectionProps) {
   return (
-    <div className="mockup-desktop relative w-full overflow-hidden rounded-xl border border-white/[0.1] bg-charcoal shadow-2xl transition-transform duration-700 group-hover/portfolio:-translate-y-1">
-      <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-ink/90 px-3 py-2.5">
-        <span className="h-2 w-2 rounded-full bg-white/15" aria-hidden />
-        <span className="h-2 w-2 rounded-full bg-white/15" aria-hidden />
-        <span className="h-2 w-2 rounded-full bg-white/15" aria-hidden />
-        <span className="mx-auto h-4 w-24 rounded-md bg-white/[0.04]" aria-hidden />
-      </div>
-      <div className={`mockup-screen relative aspect-[16/10] bg-gradient-to-br ${accent} p-4 sm:p-5`}>
-        <div className="mb-3 h-2 w-1/3 rounded-full bg-gold/30" aria-hidden />
-        <div className="mb-2 h-1.5 w-2/3 rounded-full bg-white/10" aria-hidden />
-        <div className="mb-4 h-1.5 w-1/2 rounded-full bg-white/[0.06]" aria-hidden />
-        <div className="grid grid-cols-3 gap-2">
-          <div className="col-span-2 h-16 rounded-lg border border-white/[0.06] bg-white/[0.03] sm:h-20" aria-hidden />
-          <div className="h-16 rounded-lg border border-gold/15 bg-gold/[0.06] sm:h-20" aria-hidden />
-        </div>
-        {variant === 'custom' ? (
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <div className="h-8 rounded-md bg-white/[0.04]" aria-hidden />
-            <div className="h-8 rounded-md bg-white/[0.04]" aria-hidden />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
+    <SectionShell
+      id="portfolio"
+      variant="elevated"
+      labelledBy="portfolio-title"
+      className={embedded ? 'section-embedded' : ''}
+    >
+      {!embedded ? (
+        <SectionHeader
+          id="portfolio-title"
+          eyebrow={PORTFOLIO.eyebrow}
+          title={PORTFOLIO.title}
+          subtitle={PORTFOLIO.subtitle}
+        />
+      ) : null}
 
-function MobileFrame({ accent }: { accent: string }) {
-  return (
-    <div className="mockup-mobile absolute -bottom-4 -left-3 w-[28%] min-w-[72px] max-w-[100px] overflow-hidden rounded-[14px] border border-white/[0.12] bg-ink shadow-xl sm:-bottom-5 sm:-left-4 sm:max-w-[110px]">
-      <div className="mx-auto mt-1.5 h-1 w-8 rounded-full bg-white/10" aria-hidden />
-      <div className={`aspect-[9/16] bg-gradient-to-b ${accent} p-2`}>
-        <div className="mb-2 h-1 w-3/4 rounded-full bg-gold/25" aria-hidden />
-        <div className="mb-1.5 h-0.5 w-full rounded-full bg-white/[0.08]" aria-hidden />
-        <div className="mt-3 h-10 rounded-md border border-white/[0.06] bg-white/[0.03]" aria-hidden />
-        <div className="mt-2 h-4 rounded-md bg-gold/15" aria-hidden />
-      </div>
-    </div>
-  );
-}
-
-export function PortfolioSection() {
-  return (
-    <SectionShell id="portfolio" labelledBy="portfolio-title">
-      <SectionHeader
-        id="portfolio-title"
-        eyebrow={PORTFOLIO.eyebrow}
-        title={PORTFOLIO.title}
-        subtitle={PORTFOLIO.subtitle}
-      />
-
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-16 lg:gap-20">
         {PORTFOLIO.projects.map((project, index) => (
           <motion.article
             key={project.id}
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 36 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{
-              duration: 0.7,
-              delay: index * 0.12,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="portfolio-card group/portfolio luxury-card flex flex-col p-5 sm:p-6"
+            transition={{ duration: 0.85, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            className="case-study group"
           >
-            <div className="relative mb-6 px-1 pt-1 sm:mb-7">
-              <DesktopFrame
-                accent={project.accent}
-                variant={project.id as 'landing' | 'websites' | 'custom'}
-              />
-              <MobileFrame accent={project.accent} />
-            </div>
-            <div>
-              <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.22em] text-gold/70">
-                {project.category}
-              </p>
-              <p className="mt-2 font-arabic text-sm text-smoke">{project.tag}</p>
+            <div className={`grid items-center gap-10 lg:grid-cols-2 lg:gap-14 ${index % 2 === 1 ? '' : ''}`}>
+              <div className={`relative ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
+                <div className="case-study-devices relative px-1 pt-1">
+                  <div className="case-study-desktop overflow-hidden rounded-2xl border border-white/[0.1] bg-[#0a0a0a] shadow-2xl">
+                    <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-[#111] px-3 py-2.5">
+                      <span className="h-2 w-2 rounded-full bg-[#ff5f57]/60" />
+                      <span className="h-2 w-2 rounded-full bg-[#febc2e]/60" />
+                      <span className="h-2 w-2 rounded-full bg-[#28c840]/60" />
+                      <span className="mx-auto rounded-md border border-white/[0.06] bg-black/30 px-6 py-0.5 font-sans text-[7px] text-smoke/60">
+                        {getStoreDomain(project.theme)}
+                      </span>
+                    </div>
+                    <div className="aspect-[16/10]">
+                      <PortfolioPreview theme={project.theme} variant="desktop" />
+                    </div>
+                  </div>
+                  <div className="case-study-mobile absolute -bottom-4 -left-5 w-[27%] min-w-[96px] max-w-[128px] overflow-hidden rounded-[20px] border-2 border-white/[0.12] bg-[#0a0a0a] shadow-xl sm:-bottom-5 sm:-left-7">
+                    <div className="mx-auto mt-1.5 h-0.5 w-9 rounded-full bg-white/15" />
+                    <div className="aspect-[9/16]">
+                      <PortfolioPreview theme={project.theme} variant="mobile" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={index % 2 === 1 ? 'lg:order-1' : ''}>
+                <span className="type-label text-gold/75">{project.industry}</span>
+                <h3 className="mt-3 font-heading text-2xl font-bold text-pearl sm:text-3xl">{project.nameAr}</h3>
+
+                <div className="mt-6 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Target className="mt-0.5 h-4 w-4 shrink-0 text-gold/70" strokeWidth={1.75} />
+                    <div>
+                      <p className="type-label mb-1 text-gold/60">الهدف</p>
+                      <p className="type-body text-smoke">{project.goal}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-gold/70" strokeWidth={1.75} />
+                    <div>
+                      <p className="type-label mb-1 text-gold/60">النتيجة</p>
+                      <p className="font-heading text-lg font-semibold text-gold-light">{project.result}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex items-center gap-2 font-arabic text-sm text-smoke opacity-0 transition-all duration-500 group-hover:opacity-100">
+                  <span>استكشف المشروع</span>
+                  <ArrowUpRight className="h-4 w-4 text-gold" />
+                </div>
+              </div>
             </div>
           </motion.article>
         ))}

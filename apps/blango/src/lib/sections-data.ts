@@ -1,122 +1,320 @@
 import type { LucideIcon } from 'lucide-react';
 import {
+  ArrowLeftRight,
+  Banknote,
+  BarChart3,
+  Building2,
+  Globe,
   Headphones,
   Layers,
-  Lock,
+  LayoutTemplate,
   Megaphone,
   MessageCircle,
   Palette,
-  Rocket,
-  ScanSearch,
   SlidersHorizontal,
   Smartphone,
+  Wallet,
   Zap,
 } from 'lucide-react';
 
-export const WHY_BLANGO = {
-  eyebrow: 'WHY BLANGO STUDIO?',
-  title: 'لماذا Blango Studio؟',
-  items: [
-    { label: 'تصميم مخصص لكل مشروع', icon: Palette },
-    { label: 'دعم بعد التسليم', icon: Headphones },
-    { label: 'مواقع سريعة ومتوافقة مع الهاتف', icon: Smartphone },
-    { label: 'جاهزة للإعلانات', icon: Megaphone },
-    { label: 'تحكم كامل في موقعك', icon: SlidersHorizontal },
-    { label: 'حلول قابلة للتطوير', icon: Layers },
-  ] satisfies ReadonlyArray<{ label: string; icon: LucideIcon }>,
+export const HERO = {
+  eyebrow: 'BLANGO STUDIO',
+  title: 'حضور رقمي يعكس قيمة مشروعك',
+  subtitle:
+    'نصنع مواقع وصفحات بيع فاخرة — سريعة، متجاوبة، وجاهزة لتحقيق النتائج منذ اليوم الأول.',
+  ctaPrimary: 'اطلب استشارة مجانية',
+  ctaSecondary: 'عرض الباقات',
+  trust: [
+    'تسليم سريع',
+    'متوافق مع الهاتف',
+    'جاهز للإعلانات',
+    'ملكية كاملة',
+  ],
 } as const;
 
-export const BONUSES = {
-  eyebrow: 'BONUSES',
-  title: 'مزايا إضافية',
+export const SERVICE_ITEMS = [
+  {
+    id: 'landing',
+    title: 'صفحات الهبوط',
+    description:
+      'صفحات بيع مصممة لتحويل الزوار إلى عملاء. بنية واضحة، رسائل مقنعة، وتجربة مستخدم تدفع للعمل.',
+    icon: LayoutTemplate,
+  },
+  {
+    id: 'website',
+    title: 'تصميم المواقع',
+    description:
+      'مواقع احترافية تعكس هوية مشروعك بأناقة. تصميم مخصص، متجاوب بالكامل، وجاهز للتوسع.',
+    icon: Globe,
+  },
+  {
+    id: 'whatsapp',
+    title: 'ربط واتساب',
+    description:
+      'تواصل مباشر مع عملائك عبر واتساب. زر عائم، رسائل جاهزة، وتجربة سلسة على الهاتف.',
+    icon: MessageCircle,
+  },
+  {
+    id: 'ads',
+    title: 'إعداد الإعلانات',
+    description:
+      'Facebook Pixel، Google Analytics، وتتبع متقدم. موقعك جاهز لقياس النتائج منذ الإطلاق.',
+    icon: BarChart3,
+  },
+  {
+    id: 'performance',
+    title: 'تحسين الأداء',
+    description:
+      'سرعة تحميل عالية وSEO أساسي. موقعك يعمل بسلاسة ويظهر بشكل احترافي على جميع الأجهزة.',
+    icon: Zap,
+  },
+  {
+    id: 'consultation',
+    title: 'استشارة رقمية',
+    description:
+      'تحليل مشروعك وخطة واضحة قبل البدء. نفهم أهدافك ونقترح الحل الأنسب — بدون التزام.',
+    icon: Megaphone,
+  },
+] as const satisfies ReadonlyArray<{
+  id: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}>;
+
+export const FEATURED_SERVICE_IDS = ['landing', 'website', 'whatsapp', 'ads'] as const;
+
+export const SERVICES = {
+  eyebrow: 'خدماتنا',
+  title: 'حلول رقمية متكاملة',
+  subtitle: 'من الفكرة إلى الإطلاق — كل ما يحتاجه مشروعك للنجاح على الإنترنت.',
+  previewTitle: 'خدماتنا الأساسية',
+  previewSubtitle: 'أهم ما يحتاجه مشروعك للانطلاق بسرعة — باقي الخدمات على صفحة الخدمات.',
+  viewAll: 'عرض كل الخدمات',
+  items: SERVICE_ITEMS,
+  featuredIds: FEATURED_SERVICE_IDS,
+} as const;
+
+export const WHY_BLANGO = {
+  eyebrow: 'لماذا نحن',
+  title: 'لماذا Blango Studio؟',
   items: [
-    { label: 'استشارة مجانية للمشروع', icon: MessageCircle },
-    { label: 'مراجعة مجانية للموقع الحالي', icon: ScanSearch },
-    { label: 'تحسين الأداء الأساسي', icon: Zap },
-    { label: 'إعدادات أمان أساسية', icon: Lock },
-    { label: 'مساعدة عند إطلاق الموقع', icon: Rocket },
-  ] satisfies ReadonlyArray<{ label: string; icon: LucideIcon }>,
+    {
+      label: 'تصميم مخصص لكل مشروع',
+      description: 'لا نعتمد على قوالب جاهزة. كل تصميم يُبنى حسب هدف مشروعك وهويتك.',
+      icon: Palette,
+    },
+    {
+      label: 'دعم بعد التسليم',
+      description: 'نبقى معك بعد الإطلاق. دعم حقيقي حتى يعمل موقعك بثقة واستقرار.',
+      icon: Headphones,
+    },
+    {
+      label: 'مواقع سريعة ومتوافقة مع الهاتف',
+      description: 'أداء عالٍ وتجربة مثالية على الهاتف — حيث يأتي أغلب زوارك.',
+      icon: Smartphone,
+    },
+    {
+      label: 'جاهزة للإعلانات',
+      description: 'Pixel وAnalytics وتتبع جاهز. أطلق حملاتك دون أي تأخير تقني.',
+      icon: Megaphone,
+    },
+    {
+      label: 'تحكم كامل في موقعك',
+      description: 'الموقع ملكك بالكامل. بدون قيود، بدون اشتراكات مخفية.',
+      icon: SlidersHorizontal,
+    },
+    {
+      label: 'حلول قابلة للتطوير',
+      description: 'بنية نظيفة ومرنة. أضف صفحات وميزات جديدة متى شئت.',
+      icon: Layers,
+    },
+  ] satisfies ReadonlyArray<{ label: string; description: string; icon: LucideIcon }>,
 } as const;
 
 export const HOW_WE_WORK = {
-  eyebrow: 'HOW WE WORK',
+  eyebrow: 'آلية العمل',
   title: 'كيف نعمل؟',
+  subtitle: 'عملية واضحة من البداية إلى التسليم — بدون تعقيد.',
   steps: [
-    'نفهم مشروعك واحتياجاتك',
-    'نصمم الواجهة المناسبة',
-    'نربط الأدوات اللازمة',
-    'نختبر الموقع بالكامل',
-    'نسلم المشروع جاهزاً للعمل',
+    {
+      title: 'نفهم مشروعك واحتياجاتك',
+      description: 'جلسة استكشاف لفهم أهدافك، جمهورك، وما يميز مشروعك.',
+    },
+    {
+      title: 'نصمم الواجهة المناسبة',
+      description: 'تصميم مخصص يعكس هوية مشروعك ويوجه الزائر نحو الإجراء.',
+    },
+    {
+      title: 'نربط الأدوات اللازمة',
+      description: 'واتساب، Pixel، Analytics، والاستضافة — كل شيء مُعدّ باحتراف.',
+    },
+    {
+      title: 'نختبر الموقع بالكامل',
+      description: 'اختبار شامل على الهاتف والحاسوب قبل الإطلاق.',
+    },
+    {
+      title: 'نسلم المشروع جاهزاً للعمل',
+      description: 'تسليم كامل مع دعم واضح — موقعك جاهز للنمو.',
+    },
   ],
 } as const;
 
-export const COMPARISON = {
-  eyebrow: 'COMPARISON',
-  title: 'لماذا موقع خاص أفضل من الحلول الجاهزة؟',
-  items: [
-    'تحكم كامل',
-    'مرونة أكبر',
-    'أداء أفضل',
-    'قابل للتطوير',
-    'ملكية كاملة للبيانات',
-    'تجربة مخصصة للمشروع',
-  ],
+export type PortfolioTheme = 'perfume' | 'fashion' | 'cosmetics';
+
+export const PORTFOLIO_PREVIEW = {
+  eyebrow: 'أعمالنا',
+  title: 'مشاريع مختارة',
+  subtitle: 'نتائج حقيقية لعلامات تجارية — جودة تتحدث عن نفسها.',
+  viewAll: 'عرض كل المشاريع',
+  featuredCount: 3,
 } as const;
 
 export const PORTFOLIO = {
-  eyebrow: 'PORTFOLIO',
-  title: 'أعمال مختارة',
-  subtitle: 'حلول رقمية مصممة بعناية — من صفحة الهبوط إلى المشاريع المخصصة.',
+  eyebrow: 'أعمالنا',
+  title: 'معرض الأعمال',
+  subtitle: 'نتائج حقيقية لعلامات تجارية حقيقية — تصميم فاخر يبني الثقة فوراً.',
   projects: [
     {
-      id: 'landing',
-      category: 'Landing Pages',
-      tag: 'صفحات بيع',
-      accent: 'from-gold/20 via-gold/5 to-transparent',
+      id: 'perfume',
+      theme: 'perfume' as PortfolioTheme,
+      nameAr: 'علامة عطور فاخرة',
+      industry: 'عطور وفاخرة',
+      goal: 'رفع طلبات واتساب وزيادة مبيعات التجزئة',
+      result: '+340% طلبات واتساب في 30 يوم',
     },
     {
-      id: 'websites',
-      category: 'Websites',
-      tag: 'مواقع كاملة',
-      accent: 'from-white/10 via-white/[0.03] to-transparent',
+      id: 'cosmetics',
+      theme: 'cosmetics' as PortfolioTheme,
+      nameAr: 'علامة مستحضرات تجميل فاخرة',
+      industry: 'تجميل وعناية',
+      goal: 'إطلاق حملات Meta بصفحة بيع محسّنة',
+      result: 'ROAS 4.2x من الإعلانات',
     },
     {
-      id: 'custom',
-      category: 'Custom Projects',
-      tag: 'مشاريع مخصصة',
-      accent: 'from-gold/15 via-ink to-transparent',
+      id: 'fashion',
+      theme: 'fashion' as PortfolioTheme,
+      nameAr: 'علامة أزياء فاخرة',
+      industry: 'أزياء وفاخرة',
+      goal: 'إطلاق متجر إلكتروني يعكس فخامة المجموعة',
+      result: '+280% مبيعات أونلاين في 60 يوم',
     },
   ],
 } as const;
 
-export const TESTIMONIALS = {
-  eyebrow: 'TESTIMONIALS',
-  title: 'ماذا يقول عملاؤنا',
-  subtitle: 'ثقة مبنية على نتائج حقيقية وتجربة احترافية.',
-  items: [
-    {
-      quote:
-        'تجربة احترافية من البداية للنهاية. الموقع جاهز للإعلانات خلال أيام، والتصميم يعكس هوية مشروعي بدقة.',
-      name: 'سارة م.',
-      role: 'مؤسسة — مشروع عطور',
-    },
-    {
-      quote:
-        'أفضل استثمار لمشروعي. سرعة في التسليم، جودة في التصميم، ودعم ممتاز بعد الإطلاق.',
-      name: 'يوسف ك.',
-      role: 'صاحب متجر إلكتروني',
-    },
-    {
-      quote:
-        'تحكم كامل في موقعي بدون قيود. البنية نظيفة وقابلة للتطوير — بالضبط ما كنت أبحث عنه.',
-      name: 'نادية ر.',
-      role: 'مستشارة أعمال',
-    },
+export const BEFORE_AFTER = {
+  eyebrow: 'المقارنة',
+  title: 'الفرق بين موقع عادي وموقع احترافي',
+  subtitle: 'الموقع ليس مجرد واجهة — هو أداة بيع وتسويق.',
+  before: {
+    label: 'موقع عادي',
+    items: ['تصميم قديم', 'بطء في التحميل', 'تحويل ضعيف', 'تجربة سيئة'],
+  },
+  after: {
+    label: 'موقع Blango Studio',
+    items: ['تصميم احترافي', 'سرعة عالية', 'جاهز للإعلانات', 'معدل تحويل أفضل'],
+  },
+} as const;
+
+export const WHATSAPP = {
+  url: 'https://wa.me/212649498336',
+  number: '+212 649 498 336',
+  label: 'واتساب',
+  hint: 'رد سريع',
+} as const;
+
+export const INSTAGRAM = {
+  url: 'https://www.instagram.com/blangostudio/',
+  handle: '@blangostudio',
+  label: 'إنستغرام',
+} as const;
+
+export const FACEBOOK = {
+  url: 'https://www.facebook.com/blangostudio',
+  handle: 'Blango Studio',
+  label: 'فيسبوك',
+} as const;
+
+export const EMAIL = {
+  address: 'contact@blangostudio.com',
+  href: 'mailto:contact@blangostudio.com',
+  label: 'البريد الإلكتروني',
+} as const;
+
+export const PAYMENT_METHODS = {
+  title: 'طرق الدفع المتاحة',
+  trustMessage: 'يتم إرسال معلومات الدفع بعد الاتفاق على تفاصيل المشروع.',
+  methods: [
+    { key: 'bank-transfer' as const, title: 'تحويل بنكي', titleEn: 'Bank Transfer', icon: ArrowLeftRight },
+    { key: 'cih' as const, title: 'بنك CIH', titleEn: 'CIH Bank', icon: Building2 },
+    { key: 'paypal' as const, title: 'PayPal', titleEn: 'PayPal', icon: Wallet },
+    { key: 'cash' as const, title: 'إيداع نقدي', titleEn: 'Cash Deposit', icon: Banknote },
   ],
+} as const;
+
+export const CONTACT_SECTION = {
+  eyebrow: 'تواصل معنا',
+  title: 'لنبدأ مشروعك',
+  subtitle: 'اختر الطريقة الأنسب للتواصل — نرد بسرعة ونحدد الخطوة التالية.',
+  cta: 'اطلب استشارة مجانية',
+  ctaHref: WHATSAPP.url,
+  channels: [
+    { key: 'whatsapp' as const, label: WHATSAPP.label, href: WHATSAPP.url, hint: WHATSAPP.number, primary: true },
+    { key: 'instagram' as const, label: INSTAGRAM.label, href: INSTAGRAM.url, hint: INSTAGRAM.handle, primary: true },
+    { key: 'facebook' as const, label: FACEBOOK.label, href: FACEBOOK.url, hint: FACEBOOK.handle },
+    { key: 'email' as const, label: EMAIL.label, href: EMAIL.href, hint: EMAIL.address },
+  ],
+} as const;
+
+export const CONTACT_FORM = {
+  title: 'أرسل رسالة',
+  subtitle: 'املأ النموذج وسنتواصل معك في أقرب وقت.',
+  name: 'الاسم الكامل',
+  phone: 'رقم الهاتف',
+  email: 'البريد الإلكتروني',
+  message: 'تفاصيل المشروع',
+  submit: 'إرسال عبر واتساب',
+  namePlaceholder: 'مثال: أحمد بنعلي',
+  phonePlaceholder: '06 XX XX XX XX',
+  emailPlaceholder: 'contact@blangostudio.com',
+  messagePlaceholder: 'صف مشروعك، أهدافك، والموعد المطلوب…',
+} as const;
+
+export const PAGE_HEADERS = {
+  services: {
+    eyebrow: 'خدماتنا',
+    title: 'حلول رقمية متكاملة',
+    subtitle: 'من الفكرة إلى الإطلاق — كل ما يحتاجه مشروعك للنجاح على الإنترنت.',
+  },
+  whyUs: {
+    eyebrow: 'لماذا نحن',
+    title: 'لماذا Blango Studio؟',
+    subtitle: 'تصميم مخصص، دعم حقيقي، وأداء جاهز للإعلانات — بدون قوالب جاهزة أو اشتراكات مخفية.',
+  },
+  pricing: {
+    eyebrow: 'الباقات',
+    title: 'باقات مصممة لنمو مشروعك',
+    subtitle: 'أسعار واضحة، تسليم سريع، وقيمة حقيقية — بدون مفاجآت.',
+  },
+  portfolio: {
+    eyebrow: 'الأعمال',
+    title: 'معرض المشاريع',
+    subtitle: 'استكشف مشاريعنا ونتائجنا لعلامات تجارية في قطاعات مختلفة.',
+  },
+  faq: {
+    eyebrow: 'الأسئلة',
+    title: 'الأسئلة الشائعة',
+    subtitle: 'إجابات واضحة قبل أن تبدأ مشروعك.',
+  },
+  contact: {
+    eyebrow: 'تواصل',
+    title: 'لنبدأ مشروعك',
+    subtitle: 'اختر الطريقة الأنسب — نرد بسرعة ونحدد الخطوة التالية.',
+  },
 } as const;
 
 export const FAQ_SECTION = {
-  eyebrow: 'FAQ',
+  eyebrow: 'أسئلة شائعة',
   title: 'الأسئلة الشائعة',
   subtitle: 'إجابات واضحة قبل أن تبدأ مشروعك.',
 } as const;
@@ -149,16 +347,19 @@ export const FAQ_ITEMS = [
   },
 ] as const;
 
-export const GUARANTEE = {
-  eyebrow: 'GUARANTEE',
-  title: 'ضمان Blango Studio',
-  label: 'ضمان التعديلات حتى الرضا',
-  description:
-    'نلتزم بجودة التسليم. نعدّل حتى تحصل على موقع يرضيك — بدون تعقيد، وبدون مفاجآت.',
-} as const;
-
-export const FINAL_CTA = {
+export const CONTACT_CTA = {
   title: 'جاهز للانطلاق؟',
   text: 'احصل على موقع احترافي يساعد مشروعك على النمو.',
   button: 'اطلب استشارة مجانية',
+} as const;
+
+export const FOOTER = {
+  tagline: 'وكالة رقمية — تصميم مواقع وصفحات بيع تحقق النتائج.',
+  cta: 'احجز استشارة مجانية',
+  contact: [
+    { key: 'whatsapp' as const, label: WHATSAPP.label, href: WHATSAPP.url, hint: WHATSAPP.number },
+    { key: 'instagram' as const, label: INSTAGRAM.label, href: INSTAGRAM.url, hint: INSTAGRAM.handle },
+    { key: 'facebook' as const, label: FACEBOOK.label, href: FACEBOOK.url, hint: FACEBOOK.handle },
+    { key: 'email' as const, label: EMAIL.label, href: EMAIL.href, hint: EMAIL.address },
+  ],
 } as const;

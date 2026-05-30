@@ -27,7 +27,7 @@ export default defineConfig({
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
           query: ['@tanstack/react-query', '@supabase/supabase-js'],
-          ui: ['framer-motion', 'lucide-react', 'swiper'],
+          ui: ['framer-motion', 'lucide-react'],
           i18n: ['i18next', 'react-i18next'],
           form: ['react-hook-form', '@hookform/resolvers', 'zod'],
         },

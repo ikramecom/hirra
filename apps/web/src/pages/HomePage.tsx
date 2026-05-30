@@ -1,377 +1,522 @@
+import { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Truck, ShieldCheck, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  ArrowRight,
+  Gift,
+  Sparkles,
+  Truck,
+  MessageCircle,
+  Flame,
+  Home,
+  Users,
+  Banknote,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
-import { ProductCard } from '@/components/product/ProductCard';
-import { Eyebrow } from '@/components/common/Eyebrow';
-import { SectionHeading } from '@/components/common/SectionHeading';
-import { BrandStoryStrip } from '@/components/common/BrandStoryStrip';
-import { FoundersNote } from '@/components/common/FoundersNote';
-import { GuaranteePromise } from '@/components/common/GuaranteePromise';
 import { useProducts } from '@/hooks/useProducts';
 import { useBundles } from '@/hooks/useBundles';
-import { formatSAR } from '@hirra/shared';
+import { BRAND, buildWhatsAppLink, formatMAD, type Bundle } from '@hirra/shared';
 import { useCartStore } from '@/store/cart';
+import { HERO_SLUG, getFallbackProductBySlug } from '@/lib/fallback-data';
+import { homeCopy } from '@/lib/brand-copy';
+import type { StoreLocale } from '@/i18n';
+import { Accordion } from '@/components/ui/Accordion';
+import { SectionHeader } from '@/components/brand/SectionHeader';
+import { RIYANALUXE_ASSETS } from '@/lib/assets';
+import { RiyanaluxeLogo } from '@/components/brand/RiyanaluxeLogo';
+import { getProductImageFallbackUrl } from '@/lib/product-utils';
+import { StickyMobileCTA } from '@/components/common/StickyMobileCTA';
+
+const orderCtaClass =
+  'w-full sm:w-auto min-h-[3.5rem] text-base md:text-lg font-semibold shadow-[0_8px_32px_rgba(201,169,98,0.22)]';
+
+const ease = [0.16, 1, 0.3, 1] as const;
+
+const reveal = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-60px' },
+  transition: { duration: 0.85, ease },
+};
+
+function OrderNowButton({
+  onClick,
+  className,
+  size = 'xl',
+}: {
+  onClick: () => void;
+  className?: string;
+  size?: 'lg' | 'xl';
+}) {
+  const { t } = useTranslation();
+  return (
+    <Button
+      variant="gold"
+      size={size}
+      fullWidth
+      onClick={onClick}
+      className={className}
+      rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
+    >
+      {t('bundles.order_now', { defaultValue: 'اطلب الآن' })}
+    </Button>
+  );
+}
 
 export default function HomePage() {
   const { t, i18n } = useTranslation();
-  const locale = i18n.language as 'ar' | 'en';
+  const locale = (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
   const navigate = useNavigate();
+  const copy = homeCopy(locale);
+  const clear = useCartStore((s) => s.clear);
   const addLine = useCartStore((s) => s.addLine);
   const { data: products = [] } = useProducts();
   const { data: bundles = [] } = useBundles();
 
+  const hero = getFallbackProductBySlug(HERO_SLUG) ?? products.find((p) => p.is_hero);
+  const orderMabkharaNow = useCallback(() => {
+    if (!hero) {
+      navigate('/products/riyanaluxe-mabkhara-luxe');
+      return;
+    }
+    const imageUrl =
+      hero.images[0]?.url ?? getProductImageFallbackUrl(hero.slug);
+    clear();
+    addLine({
+      product_id: hero.id,
+      product_variant_id: null,
+      slug: hero.slug,
+      name_ar: hero.name_ar,
+      name_en: hero.name_en,
+      variant_name_ar: null,
+      variant_name_en: null,
+      image_url: imageUrl,
+      unit_price_sar: Number(hero.price_sar) || 0,
+      quantity: 1,
+    });
+    navigate('/checkout');
+  }, [hero, clear, addLine, navigate]);
+
+  const orderBundleNow = useCallback(
+    (bundle: Bundle) => {
+      clear();
+      addLine({
+        bundle_id: bundle.id,
+        product_variant_id: null,
+        slug: bundle.slug,
+        name_ar: bundle.name_ar,
+        name_en: bundle.name_en,
+        variant_name_ar: null,
+        variant_name_en: null,
+        unit_price_sar: Number(bundle.price_sar) || 0,
+        quantity: 1,
+        image_url: bundle.image_url,
+      });
+      navigate('/checkout');
+    },
+    [clear, addLine, navigate],
+  );
+
+  const waHref = buildWhatsAppLink(
+    import.meta.env.VITE_WHATSAPP_PHONE || BRAND.whatsappDigits,
+    locale === 'ar'
+      ? 'السلام عليكم، بغيت نعرف أكثر على مبخرة ريانا لوكس.'
+      : 'Bonjour, je souhaite en savoir plus sur la Mabkhara RIYANALUXE.',
+  );
+
+  /** Strip any leaked Swiper/carousel DOM (legacy HMR or cached chunks). */
+  useEffect(() => {
+    document
+      .querySelectorAll(
+        '.swiper, .swiper-button-next, .swiper-button-prev, .swiper-pagination, .riyana-swiper, .riyana-thumbs',
+      )
+      .forEach((el) => el.remove());
+  }, []);
+
   return (
     <>
       <Helmet>
-        <title>{t('brand.name')} — {t('brand.tagline')}</title>
-        <meta name="description" content={t('brand.tagline')} />
+        <title>
+          {BRAND.nameAr} — {BRAND.taglineAr}
+        </title>
+        <meta name="description" content={copy.heroLead} />
+        <meta property="og:image" content={RIYANALUXE_ASSETS.social.og} />
       </Helmet>
 
-      {/* HERO ============================================================ */}
-      {/*
-        Editorial hero: cream surface (not gradient), serif display H1, brass
-        eyebrow, paired CTA — primary gold, secondary ghost. The right column
-        renders a tall image card so the section already reads as "real"
-        before Phase-2 photography lands.
-      */}
-      <section className="relative bg-cream overflow-hidden">
-        <div className="container-content pt-12 md:pt-20 lg:pt-24 pb-16 md:pb-24 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 items-center">
-            <div className="space-y-7 max-w-xl">
-              <Eyebrow>
-                {locale === 'ar' ? 'هِرّة — منزل سعودي للقطط' : 'Hirra — a Saudi cat house'}
-              </Eyebrow>
-
-              <h1 className="text-hero heading-display text-walnut text-balance">
-                {locale === 'ar' ? (
-                  <>
-                    لقطتك،
-                    <br />
-                    <span className="text-emerald">ولبيتك السعودي</span>
-                    <br />
-                    شي يستاهلكم.
-                  </>
-                ) : (
-                  <>
-                    For your cat,
-                    <br />
-                    <span className="text-emerald">and your Saudi home</span>
-                    <br />
-                    something worthy.
-                  </>
-                )}
+      {/* ——— Static hero (no carousel / swiper / motion) ——— */}
+      <section
+        id="home-hero"
+        className="border-b border-gold/10 bg-obsidian pt-24 pb-12 md:pt-28 md:pb-16"
+      >
+        <div className="container-content">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-14 lg:items-center">
+            <div className="order-2 lg:order-1 space-y-6 max-w-xl">
+              <RiyanaluxeLogo size="hero" className="pointer-events-none" />
+              <h1 className="text-hero heading-display text-pearl text-balance">
+                {locale === 'ar' ? 'الضيافة تبدأ من الريحة' : copy.heroTitle}
               </h1>
-
-              <p className="text-walnut/75 text-lg leading-relaxed text-pretty max-w-md">
-                {locale === 'ar'
-                  ? 'ثلاثة منتجات مختارة بحب — سيليكون فاخر، تصميم هادي، وضمان رضا ٣٠ يوم. صُنعت لك ولقطتك ولرخام بيتك.'
-                  : 'Three pieces, carefully chosen — premium silicone, quiet design, and a 30-day promise. Made for you, your cat, and the marble of your home.'}
+              <p className="text-2xl font-display text-gold tabular">
+                {locale === 'ar' ? '249 درهم' : '249 DH'}
               </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <div className="flex flex-col gap-3 w-full max-w-md">
+                <OrderNowButton onClick={orderMabkharaNow} className={orderCtaClass} />
                 <Button
-                  to="/products/hirra-pro-roller"
-                  variant="primary"
-                  size="xl"
-                  rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
+                  to="/products/riyanaluxe-mabkhara-luxe"
+                  variant="secondary"
+                  size="lg"
+                  fullWidth
+                  className="sm:w-auto"
                 >
-                  {locale === 'ar' ? 'تسوّقي البطلة' : 'Shop the hero'}
+                  {copy.ctaPrimary}
                 </Button>
-                <Button to="/about" variant="ghost" size="xl">
-                  {t('cta.see_story')}
-                </Button>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-xs text-walnut/65 font-semibold">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-                  {locale === 'ar' ? 'دفع عند الاستلام' : 'Cash on delivery'}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-                  {locale === 'ar' ? 'شحن ١-٣ أيام' : 'Delivery 1–3 days'}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-                  {locale === 'ar' ? 'ضمان رضا ٣٠ يوم' : '30-day guarantee'}
-                </span>
               </div>
             </div>
 
-            {/* Hero image card — Saudi modern living-room editorial shot */}
-            <div className="relative aspect-[4/5] rounded-hero overflow-hidden shadow-card-hover">
+            <div className="order-1 lg:order-2 frame-gold rounded-hero bg-ink w-full max-w-lg mx-auto lg:max-w-none flex min-h-[280px] md:min-h-[360px] items-center justify-center p-4">
               <img
-                src="/brand/hero-living-room.png"
-                alt={
-                  locale === 'ar'
-                    ? 'بيت سعودي حديث مع قطة بريطانية رمادية وعباية سوداء وهِرّة برو رولر'
-                    : 'A modern Saudi living room with a British Shorthair, a black abaya, and the Hirra Pro Roller'
-                }
-                className="absolute inset-0 h-full w-full object-cover img-fade"
+                src={RIYANALUXE_ASSETS.products.mabkhara.main}
+                alt={locale === 'ar' ? 'ريانا لوكس — مبخرة لوكس' : 'RIYANALUXE Mabkhara Luxe'}
+                width={800}
+                height={1000}
+                className="block w-full h-full max-h-[480px] object-contain object-center"
                 loading="eager"
                 fetchPriority="high"
+                decoding="sync"
               />
-
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-walnut/65 via-walnut/10 to-transparent"
-                aria-hidden
-              />
-
-              <div className="relative h-full flex flex-col justify-end p-7 md:p-9 text-cream">
-                <Eyebrow tone="cream">
-                  {locale === 'ar' ? 'البطلة' : 'The hero'}
-                </Eyebrow>
-                <p className="font-display text-3xl md:text-4xl mt-2 leading-tight">
-                  Hirra Pro Roller
-                </p>
-                <p className="text-cream/85 text-sm mt-2 max-w-[28ch]">
-                  {locale === 'ar'
-                    ? 'سيليكون فاخر، يلتقط الشعر بسحبة واحدة. آمن للعباية السوداء.'
-                    : 'Premium silicone. One swipe. Safe on black abayas.'}
-                </p>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* TRUST RIBBON ===================================================== */}
-      <section className="bg-walnut text-cream/80 border-y border-walnut">
-        <div className="container-content py-4">
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-xs uppercase tracking-[0.16em] font-semibold">
-            <span>{locale === 'ar' ? '⌖ شحن إلى كل المدن' : '⌖ Ships to every city'}</span>
-            <span className="hidden md:inline">·</span>
-            <span>{locale === 'ar' ? 'دفع عند الاستلام' : 'Cash on delivery'}</span>
-            <span className="hidden md:inline">·</span>
-            <span>{locale === 'ar' ? 'مصمم في الرياض' : 'Designed in Riyadh'}</span>
-            <span className="hidden md:inline">·</span>
-            <span>{locale === 'ar' ? 'دعم بالعربي على واتساب' : 'Arabic WhatsApp support'}</span>
-          </div>
+      {/* ——— Ritual quote ——— */}
+      <section className="py-20 md:py-28 border-y border-gold/[0.08] bg-obsidian">
+        <div className="container-content max-w-2xl mx-auto px-4 text-center space-y-8">
+          <div className="hairline-gold" />
+          <p className="text-lg md:text-xl lg:text-[1.35rem] text-pearl leading-[1.95] text-pretty font-normal">
+            {copy.ritualQuote}
+          </p>
+          <div className="hairline-gold" />
         </div>
       </section>
 
-      {/* BRAND STORY STRIP ================================================ */}
-      <section className="container-content section-y space-y-10">
-        <SectionHeading
-          eyebrow={locale === 'ar' ? 'القصة' : 'The story'}
-          title={
-            locale === 'ar'
-              ? 'ثلاث لحظات في كل بيت سعودي فيه قطة.'
-              : 'Three moments in every Saudi home with a cat.'
-          }
-          description={
-            locale === 'ar'
-              ? 'هِرّة بُنيت على هذي اللحظات الثلاث — الواقع، الحل، والنتيجة.'
-              : 'Hirra is built around these three moments — the reality, the ritual, and the result.'
-          }
-        />
-        <BrandStoryStrip />
-      </section>
-
-      {/* PRODUCTS ======================================================== */}
-      <section className="bg-whisper">
-        <div className="container-content section-y space-y-10">
-          <SectionHeading
-            eyebrow={locale === 'ar' ? 'المجموعة' : 'The collection'}
-            title={
-              locale === 'ar' ? 'ثلاث قطع. اختيرت بحب.' : 'Three pieces. Chosen with care.'
-            }
-            description={
-              locale === 'ar'
-                ? 'لا تشكيلة ضخمة، ولا فوضى. فقط الأساسيات اللي يستاهلها بيتك.'
-                : 'No bloated catalogue. Just the essentials your home deserves.'
-            }
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+      {/* ——— Three pillars ——— */}
+      <section className="section-y">
+        <div className="container-content">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {[
+              {
+                icon: Flame,
+                title: locale === 'ar' ? 'طقوس نقية' : 'Rituel pur',
+                text:
+                  locale === 'ar'
+                    ? 'بخور بلا فحم — ريحة صافية تملأ الصالون بهدوء.'
+                    : 'Sans charbon — un parfum clair qui emplit le salon.',
+              },
+              {
+                icon: Sparkles,
+                title: locale === 'ar' ? 'تفاصيل ذهبية' : 'Détails dorés',
+                text:
+                  locale === 'ar'
+                    ? 'أسود مطفي، لمسات ذهبية، وتصميم يُرى قبل أن يُلمس.'
+                    : 'Noir mat, accents dorés, présence avant le toucher.',
+              },
+              {
+                icon: Gift,
+                title: locale === 'ar' ? 'هدية تُذكر' : 'Cadeau mémorable',
+                text:
+                  locale === 'ar'
+                    ? 'للعيد، الزيارات، والمناسبات — تقديم يليق بالكرم.'
+                    : 'Pour l’Aïd et les visites — un geste généreux.',
+              },
+            ].map((item) => (
+              <motion.div key={item.title} {...reveal} className="luxury-card-hover p-8 md:p-10 space-y-5">
+                <item.icon className="h-7 w-7 text-gold/90" strokeWidth={1.25} />
+                <h3 className="text-h3 text-pearl">{item.title}</h3>
+                <p className="prose-luxury text-sm">{item.text}</p>
+              </motion.div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center pt-4">
-            <Button
-              to="/products"
-              variant="secondary"
-              size="lg"
-              rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
-            >
-              {locale === 'ar' ? 'عرض كل المنتجات' : 'View the full collection'}
-            </Button>
+      {/* ——— Mabkhara editorial (text only — hero image is above) ——— */}
+      <section id="home-product" className="section-y cinematic-gradient">
+        <div className="container-content space-y-10 md:space-y-14">
+          <SectionHeader title={copy.mabkharaTitle} lead={copy.mabkharaLead} />
+          <div className="max-w-md mx-auto px-2 md:hidden">
+            <OrderNowButton onClick={orderMabkharaNow} size="lg" />
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <ul className="space-y-5">
+              {(locale === 'ar'
+                ? [
+                    'تسخين مستقر — بخورك جاهز في دقيقة',
+                    'قفل أمان — راحة بال للعائلة',
+                    'شحن USB Type-C — للدار والسفر',
+                    'مثالية للعيد، الأعراس، والزيارات',
+                  ]
+                : [
+                    'Chauffe stable — prêt en une minute',
+                    'Verrou sécurité enfants',
+                    'Charge Type-C',
+                    'Idéale pour l’Aïd et les réceptions',
+                  ]
+              ).map((line, i) => (
+                <li
+                  key={line}
+                  className="flex gap-4 text-lg text-champagne/90 border-b border-gold/10 pb-5 last:border-0"
+                >
+                  <span className="text-gold/60 text-sm tabular mt-1">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {line}
+                </li>
+              ))}
+              <li className="pt-6 space-y-3">
+                <OrderNowButton onClick={orderMabkharaNow} size="lg" />
+                <p className="text-center sm:text-start text-sm text-smoke tabular">
+                  {locale === 'ar' ? '249 درهم · الدفع عند التسليم' : '249 MAD · Paiement à la livraison'}
+                </p>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* RITUAL BUNDLES ================================================== */}
-      {bundles.length > 0 ? (
-        <section className="bg-emerald-deep text-cream">
-          <div className="container-content section-y space-y-10">
-            <SectionHeading
-              tone="dark"
-              eyebrow={locale === 'ar' ? 'مجموعات هِرّة' : 'Hirra rituals'}
-              title={
-                locale === 'ar' ? 'مجموعة واحدة. روتين كامل.' : 'One bundle. A whole ritual.'
-              }
-              description={
-                locale === 'ar'
-                  ? 'وفّري أكثر، حبّي أكثر — كل ما تحتاجينه لقطتك في مجموعة واحدة.'
-                  : 'Save more, love more — everything your cat needs, in one set.'
-              }
+      {/* ——— Packaging & gift ——— */}
+      <section className="section-y border-t border-gold/[0.08]">
+        <div className="container-content grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+          <SectionHeader
+            eyebrow={locale === 'ar' ? 'التقديم' : 'Présentation'}
+            title={copy.packagingTitle}
+            lead={copy.packagingLead}
+          />
+          <div className="frame-gold rounded-hero bg-ink flex w-full min-h-[280px] sm:min-h-[320px] md:min-h-[380px] items-center justify-center p-6 sm:p-8 md:p-10">
+            <img
+              src={RIYANALUXE_ASSETS.packaging}
+              alt={locale === 'ar' ? 'تغليف ريانا لوكس الفاخر' : 'Emballage RIYANALUXE'}
+              className="block h-auto w-full max-h-[360px] max-w-full object-contain object-center"
+              loading="lazy"
+              decoding="async"
             />
+          </div>
+          <div className="max-w-md mx-auto w-full lg:col-span-2 pt-4">
+            <OrderNowButton onClick={orderMabkharaNow} />
+          </div>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+      {/* ——— Atmosphere ——— */}
+      <section className="relative py-28 md:py-36 overflow-hidden min-h-[50vh] flex items-center">
+        <img
+          src={RIYANALUXE_ASSETS.lifestyle.atmosphere}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-obsidian/70" />
+        <motion.div {...reveal} className="container-content relative text-center max-w-2xl mx-auto space-y-8 px-4">
+          <Home className="h-10 w-10 text-gold/60 mx-auto" strokeWidth={1.25} />
+          <h2 className="text-h1 heading-display text-pearl">{copy.atmosphereTitle}</h2>
+          <p className="prose-luxury text-lg">{copy.atmosphereLead}</p>
+          <div className="max-w-md mx-auto pt-2">
+            <OrderNowButton onClick={orderMabkharaNow} size="lg" />
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ——— Testimonials ——— */}
+      <section className="section-y-tight border-y border-gold/[0.08] relative overflow-hidden">
+        <img
+          src={RIYANALUXE_ASSETS.sections.testimonialBg}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-obsidian/80" />
+        <div className="container-content relative space-y-12">
+          <SectionHeader title={copy.testimonialsTitle} align="center" />
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {[
+              {
+                name: 'سلمى',
+                city: 'الدار البيضاء',
+                text:
+                  locale === 'ar'
+                    ? 'هدية العيد اللي فرحات أمي. التغليف حسّني بوتيك بالمعمورة — والمبخرة أحسن من التصور.'
+                    : 'Cadeau de fête qui a ému ma mère. Emballage digne d’une boutique.',
+              },
+              {
+                name: 'Yasmine',
+                city: 'Rabat',
+                text:
+                  locale === 'ar'
+                    ? 'أخيراً بخور بلا فحم يحترم صالوني. الريحة كتبدل الجوّ كامل.'
+                    : 'Enfin un bakhoor qui respecte mon salon.',
+              },
+              {
+                name: 'نادية',
+                city: 'مراكش',
+                text:
+                  locale === 'ar'
+                    ? 'التوصيل كان أنيق، والتأكيد عبر واتساب احترافي بزاف.'
+                    : 'Livraison soignée, confirmation WhatsApp professionnelle.',
+              },
+            ].map((r) => (
+              <motion.blockquote key={r.name} {...reveal} className="luxury-card p-8 space-y-4">
+                <p className="text-champagne leading-[1.8] text-pretty">&ldquo;{r.text}&rdquo;</p>
+                <footer className="text-xs uppercase tracking-[0.2em] text-gold/80">
+                  {r.name} · {r.city}
+                </footer>
+              </motion.blockquote>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ——— Bundles — direct order ——— */}
+      {bundles.length > 0 ? (
+        <section
+          id="home-bundles"
+          className="section-y-tight border-t border-gold/[0.08] bg-charcoal/30"
+        >
+          <div className="container-content space-y-10 md:space-y-12">
+            <SectionHeader
+              eyebrow={t('bundles.eyebrow')}
+              title={t('nav.bundles')}
+              lead={
+                locale === 'ar'
+                  ? 'تشكيلات جاهزة للطلب — مبخرة وطقوس المنزل في تقديم واحد.'
+                  : 'Sélections prêtes à commander — une présentation complète.'
+              }
+              align="center"
+            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 max-w-5xl mx-auto">
               {bundles.map((b) => (
-                <article
+                <motion.div
                   key={b.id}
-                  className="group bg-cream text-walnut rounded-card overflow-hidden shadow-card hover:shadow-card-hover transition-shadow"
+                  {...reveal}
+                  className="luxury-card flex flex-col gap-4 p-6 md:p-7 text-center"
                 >
-                  <div className="aspect-[4/3] bg-sand/40 overflow-hidden relative">
-                    {b.image_url ? (
-                      <img
-                        src={b.image_url}
-                        alt={locale === 'ar' ? b.name_ar : b.name_en}
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="h-full w-full grid place-items-center text-5xl text-walnut/30">
-                        ◇
-                      </div>
-                    )}
-                    {b.savings_sar ? (
-                      <div className="absolute top-3 start-3 chip bg-emerald text-cream border-emerald">
-                        {locale === 'ar' ? 'وفّري' : 'Save'} {formatSAR(b.savings_sar, locale)}
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="p-5 md:p-6 space-y-3">
-                    <h3 className="text-lg font-semibold heading-display">
-                      {locale === 'ar' ? b.name_ar : b.name_en}
-                    </h3>
-                    <p className="text-sm text-walnut/70 leading-relaxed clamp-2">
-                      {locale === 'ar' ? b.description_ar : b.description_en}
-                    </p>
-                    <div className="flex items-baseline justify-between pt-2 border-t border-walnut/10">
-                      <span className="text-xl font-bold text-emerald tabular">
-                        {formatSAR(b.price_sar, locale)}
-                      </span>
-                      <span className="text-xs font-semibold text-walnut/55 uppercase tracking-wider">
-                        {locale === 'ar' ? 'مجموعة' : 'Bundle'}
-                      </span>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="primary"
-                      size="md"
-                      fullWidth
-                      className="mt-1 font-semibold"
-                      onClick={() => {
-                        addLine({
-                          bundle_id: b.id,
-                          name_ar: b.name_ar,
-                          name_en: b.name_en,
-                          image_url: b.image_url ?? null,
-                          slug: b.slug,
-                          unit_price_sar: Number(b.price_sar),
-                          quantity: 1,
-                        });
-                        navigate('/checkout');
-                      }}
-                    >
-                      {locale === 'ar' ? 'اطلبي الآن' : 'Order now'}
-                    </Button>
-                  </div>
-                </article>
+                  <h3 className="text-lg heading-display text-pearl text-balance min-h-[3rem] flex items-center justify-center">
+                    {locale === 'ar' ? b.name_ar : b.name_en}
+                  </h3>
+                  <p className="text-2xl font-display text-gold tabular">
+                    {formatMAD(Number(b.price_sar) || 0, locale)}
+                  </p>
+                  <OrderNowButton
+                    onClick={() => orderBundleNow(b)}
+                    size="lg"
+                    className="mt-auto"
+                  />
+                </motion.div>
               ))}
+            </div>
+            <div className="flex justify-center pt-2">
+              <Button to="/bundles" variant="ghost" size="lg">
+                {locale === 'ar' ? 'عرض كل التشكيلات' : 'Voir toutes les sélections'}
+              </Button>
             </div>
           </div>
         </section>
       ) : null}
 
-      {/* WHY HIRRA ======================================================= */}
-      <section className="container-content section-y">
-        <SectionHeading
-          eyebrow={locale === 'ar' ? 'وعدنا' : 'Our promise'}
-          title={locale === 'ar' ? 'لماذا هِرّة؟' : 'Why Hirra'}
-          description={
-            locale === 'ar'
-              ? 'ثلاث وعود نسجّلها على ورقة كل طلب — لأن الثقة تُبنى بهدوء.'
-              : 'Three promises printed on every order — because trust is built quietly.'
-          }
-          className="mb-12 md:mb-14"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-          {[
-            {
-              icon: Truck,
-              titleAr: 'شحن سريع',
-              titleEn: 'Fast shipping',
-              descAr: 'توصيل ١-٣ أيام في الرياض وجدة والدمام — ٣-٥ أيام لباقي المدن.',
-              descEn: '1–3 days in Riyadh, Jeddah, Dammam — 3–5 days for other cities.',
-            },
-            {
-              icon: ShieldCheck,
-              titleAr: 'ضمان رضا ٣٠ يوم',
-              titleEn: '30-day guarantee',
-              descAr: 'لو ما عجبك، نستلمه ونرجع لك فلوسك — كاملة، بدون تعقيد.',
-              descEn: 'If it’s not right, we collect it and refund you in full — no questions.',
-            },
-            {
-              icon: MessageSquare,
-              titleAr: 'دعم سعودي',
-              titleEn: 'Saudi support',
-              descAr: 'نتكلم لغتك، نفهم بيتك، ونرد على واتساب بسرعة.',
-              descEn: 'We speak your language, know your home, and reply on WhatsApp fast.',
-            },
-          ].map((feat) => (
-            <div
-              key={feat.titleEn}
-              className="bg-whisper rounded-card border border-walnut/10 p-7 md:p-8 space-y-4 hover:shadow-card transition-shadow"
-            >
-              <div className="h-12 w-12 rounded-2xl bg-emerald/10 text-emerald grid place-items-center">
-                <feat.icon className="h-5 w-5" />
+      {/* ——— Trust — calm, not spammy ——— */}
+      <section className="py-20 md:py-24">
+        <div className="container-content space-y-12">
+          <SectionHeader title={copy.trustTitle} align="center" className="mb-2" />
+          <div className="grid sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
+            {[
+              { icon: Users, label: t('trust.happy_customers') },
+              { icon: Truck, label: t('trust.nationwide_delivery') },
+              { icon: Banknote, label: t('trust.cod_at_delivery') },
+            ].map((item) => (
+              <div key={item.label} className="text-center space-y-4">
+                <div className="mx-auto h-14 w-14 rounded-full border border-gold/20 flex items-center justify-center">
+                  <item.icon className="h-6 w-6 text-gold/80" strokeWidth={1.25} />
+                </div>
+                <p className="text-sm text-champagne font-medium">{item.label}</p>
               </div>
-              <h3 className="text-lg font-semibold heading-display text-walnut">
-                {locale === 'ar' ? feat.titleAr : feat.titleEn}
-              </h3>
-              <p className="text-walnut/70 text-sm leading-relaxed">
-                {locale === 'ar' ? feat.descAr : feat.descEn}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="max-w-md mx-auto px-4">
+            <OrderNowButton onClick={orderMabkharaNow} />
+          </div>
         </div>
       </section>
 
-      {/* FOUNDER'S NOTE ================================================== */}
-      <section className="container-content section-y-tight">
-        <FoundersNote />
-      </section>
-
-      {/* RE-ASSURANCE ROW + FINAL CTA ==================================== */}
-      <section className="container-content pb-16 md:pb-24 space-y-10">
-        <GuaranteePromise />
-
-        <div className="text-center space-y-5 max-w-xl mx-auto pt-4">
-          <Eyebrow>{locale === 'ar' ? 'ابدئي من هنا' : 'Start here'}</Eyebrow>
-          <h2 className="text-h2 heading-display text-walnut text-balance">
-            {locale === 'ar'
-              ? 'قطتك، بيتك، عبايتك — كلهم يستاهلون الأفضل.'
-              : 'Your cat. Your home. Your abaya. They all deserve better.'}
-          </h2>
-          <Button
-            to="/products/hirra-pro-roller"
-            variant="primary"
-            size="xl"
-            rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
-          >
-            {locale === 'ar' ? 'تسوّقي البطلة' : 'Shop the hero'}
-          </Button>
+      {/* ——— FAQ ——— */}
+      <section className="section-y-tight border-t border-gold/[0.08]">
+        <div className="container-content max-w-xl mx-auto space-y-10">
+          <SectionHeader title={copy.faqTitle} align="center" />
+          <div className="max-w-md mx-auto px-2 pb-2">
+            <OrderNowButton onClick={orderMabkharaNow} size="lg" />
+          </div>
+          <Accordion
+            items={
+              locale === 'ar'
+                ? [
+                    {
+                      question: 'كيف يتم تأكيد الطلب؟',
+                      answer:
+                        'بعد الطلب، نتواصل معكم هاتفياً أو عبر واتساب لتأكيد التفاصيل — ثم نرسل القطعة بتغليفها الفاخر.',
+                    },
+                    {
+                      question: 'هل المبخرة بدون فحم؟',
+                      answer:
+                        'نعم. تسخين كهربائي نظيف — بخور بلا رماد ولا فوضى في الصالون.',
+                    },
+                    {
+                      question: 'ما هي مدة التوصيل؟',
+                      answer:
+                        'من 2 إلى 5 أيام حسب المدينة. الدار البيضاء والرباط عادةً أسرع (2-3 أيام).',
+                    },
+                  ]
+                : [
+                    {
+                      question: 'Comment confirmer la commande ?',
+                      answer: 'Nous vous contactons par WhatsApp ou téléphone avant l’envoi.',
+                    },
+                    {
+                      question: 'Sans charbon ?',
+                      answer: 'Oui — chauffage électrique, bakhoor propre.',
+                    },
+                    {
+                      question: 'Délais ?',
+                      answer: '2 à 5 jours selon la ville.',
+                    },
+                  ]
+            }
+          />
         </div>
       </section>
+
+      {/* ——— Closing CTA ——— */}
+      <section className="py-24 md:py-32">
+        <motion.div
+          {...reveal}
+          className="container-content text-center max-w-lg mx-auto space-y-8"
+        >
+          <p className="text-champagne">{copy.closingCta}</p>
+          <div className="flex flex-col gap-4 justify-center max-w-md mx-auto w-full px-4">
+            <OrderNowButton onClick={orderMabkharaNow} />
+            <Button href={waHref} variant="whatsapp" size="lg" target="_blank" fullWidth>
+              <MessageCircle className="h-5 w-5" />
+              {t('cta.order_via_whatsapp')}
+            </Button>
+          </div>
+        </motion.div>
+      </section>
+
+      <StickyMobileCTA
+        label={t('bundles.order_now', { defaultValue: 'اطلب الآن' })}
+        onClick={orderMabkharaNow}
+        price={locale === 'ar' ? '249 درهم' : '249 MAD'}
+        showAfter={280}
+      />
     </>
   );
 }

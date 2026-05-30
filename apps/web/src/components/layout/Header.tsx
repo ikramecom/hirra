@@ -1,91 +1,56 @@
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, ShoppingBag, Globe } from 'lucide-react';
 
 import { useCartStore } from '@/store/cart';
 import { useUIStore } from '@/store/ui';
-import { HirraLogo } from '@/components/brand/HirraLogo';
+import { RiyanaluxeLogo } from '@/components/brand/RiyanaluxeLogo';
 import { cn } from '@/lib/cn';
+import type { StoreLocale } from '@/i18n';
 
-/**
- * Premium navigation chrome.
- *
- * - Logo gets a hand-set wordmark in display script + tiny brass tagline cap.
- * - Nav uses link-underline animation (brass-toned underline on hover/active).
- * - Cart icon shows a brass-on-emerald counter dot only when count > 0.
- */
 export function Header() {
   const { t, i18n } = useTranslation();
+  const locale = (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
   const itemCount = useCartStore((s) => s.itemCount());
   const openDrawer = useCartStore((s) => s.openDrawer);
   const openMobileNav = useUIStore((s) => s.openMobileNav);
 
   const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
+    i18n.changeLanguage(locale === 'ar' ? 'fr' : 'ar');
   };
 
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'text-sm font-medium transition-colors',
+      isActive ? 'text-gold' : 'text-pearl/70 hover:text-pearl',
+    );
+
   return (
-    <header className="sticky top-0 z-30 bg-cream/85 backdrop-blur-md border-b border-walnut/10">
-      <div className="container-content flex items-center justify-between gap-4 h-16">
+    <header className="sticky top-0 z-30 bg-obsidian/90 backdrop-blur-xl border-b border-gold/10">
+      <div className="container-content flex items-center justify-between h-16 md:h-[4.5rem]">
         <button
           type="button"
           onClick={openMobileNav}
-          className="md:hidden p-2 -ms-2 text-walnut hover:text-emerald transition"
-          aria-label="Open menu"
+          className="md:hidden p-2 text-pearl/80"
+          aria-label="Menu"
         >
           <Menu className="h-6 w-6" />
         </button>
 
-        <Link
-          to="/"
-          className="text-walnut hover:opacity-90 transition-opacity -my-1"
-          aria-label={t('brand.name')}
-        >
-          <HirraLogo variant="icon" className="sm:hidden" />
-          <HirraLogo variant="full" showTagline className="hidden sm:inline-flex" />
-        </Link>
+        <RiyanaluxeLogo responsive className="md:mx-0 mx-auto md:mx-0 shrink-0" />
 
-        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-walnut/80">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              cn('link-underline transition', isActive && 'text-emerald')
-            }
-          >
+        <nav className="hidden md:flex items-center gap-8">
+          <NavLink to="/" end className={linkClass}>
             {t('nav.home')}
           </NavLink>
-          <NavLink
-            to="/products"
-            className={({ isActive }) =>
-              cn('link-underline transition', isActive && 'text-emerald')
-            }
-          >
-            {t('nav.shop')}
+          <NavLink to="/products/riyanaluxe-mabkhara-luxe" className={linkClass}>
+            {t('nav.mabkhara')}
           </NavLink>
-          <NavLink
-            to="/products/hirra-pro-roller"
-            className={({ isActive }) =>
-              cn('link-underline transition', isActive && 'text-emerald')
-            }
-          >
-            {t('nav.bestsellers')}
+          <NavLink to="/bundles" className={linkClass}>
+            {t('nav.bundles')}
           </NavLink>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              cn('link-underline transition', isActive && 'text-emerald')
-            }
-          >
+          <NavLink to="/about" className={linkClass}>
             {t('nav.about')}
-          </NavLink>
-          <NavLink
-            to="/track"
-            className={({ isActive }) =>
-              cn('link-underline transition', isActive && 'text-emerald')
-            }
-          >
-            {t('nav.track')}
           </NavLink>
         </nav>
 
@@ -93,25 +58,20 @@ export function Header() {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="p-2 text-walnut/70 hover:text-emerald transition flex items-center gap-1.5 text-sm font-semibold"
-            aria-label="Toggle language"
+            className="p-2 text-pearl/60 hover:text-gold text-sm font-semibold flex items-center gap-1"
           >
             <Globe className="h-4 w-4" />
             <span className="hidden sm:inline">{t('nav.language')}</span>
           </button>
-
           <button
             type="button"
             onClick={openDrawer}
-            className="relative p-2 text-walnut hover:text-emerald transition"
-            aria-label="Open cart"
+            className="relative p-2 text-pearl hover:text-gold"
+            aria-label="Cart"
           >
-            <ShoppingBag className="h-6 w-6" />
+            <ShoppingBag className="h-5 w-5" />
             {itemCount > 0 ? (
-              <span
-                className="absolute -top-0.5 -end-0.5 bg-emerald text-cream text-[10px] font-bold rounded-full h-5 min-w-5 px-1 grid place-items-center ring-2 ring-cream tabular"
-                aria-label={`${itemCount} items in cart`}
-              >
+              <span className="absolute -top-0.5 -end-0.5 bg-gold text-obsidian text-[10px] font-bold rounded-full h-5 min-w-5 px-1 grid place-items-center">
                 {itemCount}
               </span>
             ) : null}

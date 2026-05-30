@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 48" fill="none" role="img" aria-label="RIYANALUXE">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2CF9A"/>
+      <stop offset="50%" stop-color="#C9A962"/>
+      <stop offset="100%" stop-color="#A88B45"/>
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="22" stroke="url(#gold)" stroke-width="1.2" fill="#141210"/>
+  <path d="M24 10c-1.5 6-7 10.5-7 17a7 7 0 1 0 14 0c0-6.5-5.5-11-7-17z" fill="url(#gold)"/>
+  <text x="56" y="30" fill="#F5F0E8" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="500" letter-spacing="0.2em">RIYANALUXE</text>
+  <text x="56" y="44" fill="#C9A962" font-family="system-ui, sans-serif" font-size="9" letter-spacing="0.2em" opacity="0.9">1J'F' DHC3</text>
+</svg>

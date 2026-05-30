@@ -1,14 +1,20 @@
 {
-  "name": "Hirra — هِرّة",
-  "short_name": "Hirra",
-  "description": "منتجات قطط فاخرة في السعودية",
+  "name": "RIYANALUXE — ريانا لوكس",
+  "short_name": "RIYANALUXE",
+  "description": "مبخرة فاخرة وطقوس منزلية للمغرب العربي",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F4ECE0",
-  "theme_color": "#0E5C42",
+  "background_color": "#0A0908",
+  "theme_color": "#0A0908",
   "lang": "ar",
   "dir": "rtl",
   "icons": [
+    {
+      "src": "/brand/riyanaluxe-logo-mark.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/favicon.svg",
       "sizes": "any",

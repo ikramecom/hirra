@@ -3,38 +3,47 @@ import { WHY_BLANGO } from '@/lib/sections-data';
 import { SectionHeader } from './SectionHeader';
 import { SectionShell } from './SectionShell';
 
-export function WhyBlangoSection() {
+interface WhyBlangoSectionProps {
+  embedded?: boolean;
+}
+
+export function WhyBlangoSection({ embedded = false }: WhyBlangoSectionProps) {
   return (
-    <SectionShell id="why-blango" labelledBy="why-blango-title">
+    <SectionShell
+      id="why-blango"
+      labelledBy="why-blango-title"
+      className={embedded ? 'section-embedded' : ''}
+    >
       <SectionHeader
         id="why-blango-title"
         eyebrow={WHY_BLANGO.eyebrow}
         title={WHY_BLANGO.title}
       />
 
-      <ul className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-        {WHY_BLANGO.items.map(({ label, icon: Icon }, index) => (
+      <ul className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+        {WHY_BLANGO.items.map(({ label, description, icon: Icon }, index) => (
           <motion.li
             key={label}
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{
-              duration: 0.6,
+              duration: 0.65,
               delay: index * 0.07,
               ease: [0.16, 1, 0.3, 1],
             }}
           >
-            <div className="luxury-card group/card flex h-full flex-col gap-4 p-6 sm:p-7">
+            <div className="luxury-card group/card flex h-full flex-col gap-5 p-7 sm:p-8">
               <span
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-gold/25 bg-gold/[0.08] transition-all duration-500 group-hover/card:border-gold/40 group-hover/card:bg-gold/[0.14]"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border border-gold/30 bg-gradient-to-br from-gold/[0.12] to-transparent transition-all duration-500 group-hover/card:border-gold/45 group-hover/card:shadow-glow"
                 aria-hidden
               >
                 <Icon className="h-5 w-5 text-gold" strokeWidth={1.75} />
               </span>
-              <p className="font-arabic text-[15px] font-medium leading-relaxed text-pearl/90 sm:text-base">
-                {label}
-              </p>
+              <div>
+                <h3 className="font-heading text-lg font-bold text-pearl sm:text-xl">{label}</h3>
+                <p className="type-body mt-3 text-smoke">{description}</p>
+              </div>
             </div>
           </motion.li>
         ))}
