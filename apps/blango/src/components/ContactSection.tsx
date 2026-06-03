@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { META_LEAD_CONSULTATION_ATTR } from '@/lib/meta-pixel';
 import { CONTACT_SECTION } from '@/lib/sections-data';
 import { BusinessEmail } from '@/components/common/BusinessEmail';
 import { PhoneNumber } from '@/components/common/PhoneNumber';
@@ -120,6 +121,7 @@ export function ContactSection({ variant = 'standalone' }: ContactSectionProps) 
               href={CONTACT_SECTION.ctaHref}
               target="_blank"
               rel="noopener noreferrer"
+              data-meta-lead={META_LEAD_CONSULTATION_ATTR}
               className="btn-primary btn-primary-lg group/contact mt-14 inline-flex"
             >
               {CONTACT_SECTION.cta}

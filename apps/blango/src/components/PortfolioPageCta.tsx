@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
+import { META_LEAD_CONSULTATION_ATTR } from '@/lib/meta-pixel';
 import { PORTFOLIO_CTA, WHATSAPP } from '@/lib/sections-data';
 import { SectionShell } from './SectionShell';
 
@@ -22,6 +23,7 @@ export function PortfolioPageCta() {
             href={WHATSAPP.url}
             target="_blank"
             rel="noopener noreferrer"
+            data-meta-lead={META_LEAD_CONSULTATION_ATTR}
             className="btn-primary btn-primary-lg inline-flex w-full sm:w-auto"
           >
             {PORTFOLIO_CTA.button}

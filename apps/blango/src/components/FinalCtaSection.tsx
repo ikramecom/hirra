@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { META_LEAD_CONSULTATION_ATTR } from '@/lib/meta-pixel';
 import { CONTACT_CTA, WHATSAPP } from '@/lib/sections-data';
 import { ROUTES } from '@/lib/routes';
 import { SectionShell } from './SectionShell';
@@ -24,6 +25,7 @@ export function FinalCtaSection() {
             href={WHATSAPP.url}
             target="_blank"
             rel="noopener noreferrer"
+            data-meta-lead={META_LEAD_CONSULTATION_ATTR}
             className="btn-primary btn-primary-lg inline-flex w-full sm:w-auto"
           >
             {CONTACT_CTA.button}

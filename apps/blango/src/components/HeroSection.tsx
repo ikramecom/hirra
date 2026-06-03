@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { META_LEAD_CONSULTATION_ATTR } from '@/lib/meta-pixel';
 import { HERO, WHATSAPP } from '@/lib/sections-data';
 import { ROUTES } from '@/lib/routes';
 import { HeroMockup } from './HeroMockup';
@@ -62,6 +63,7 @@ export function HeroSection() {
                 href={WHATSAPP.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-meta-lead={META_LEAD_CONSULTATION_ATTR}
                 className="btn-primary btn-hero w-full sm:w-auto"
               >
                 {HERO.ctaPrimary}

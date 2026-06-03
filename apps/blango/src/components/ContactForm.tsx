@@ -16,7 +16,7 @@ export function ContactForm({ compact = false }: ContactFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    trackMetaLead('contact_form_submit');
+    trackMetaLead('contact_form_submit', { logForm: true });
     const body = [
       'مرحباً Blango Studio،',
       '',

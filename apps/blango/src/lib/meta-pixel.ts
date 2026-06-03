@@ -1,7 +1,17 @@
-import { PORTFOLIO_CTA } from '@/lib/sections-data';
+import { CONTACT_CTA, CONTACT_SECTION, HERO, PORTFOLIO_CTA } from '@/lib/sections-data';
 
-/** Exact CTA copy that should fire a Lead event (portfolio final CTA). */
-export const META_LEAD_CONSULTATION_CTA = PORTFOLIO_CTA.button;
+/** data-meta-lead value for primary consultation CTAs */
+export const META_LEAD_CONSULTATION_ATTR = 'consultation';
+
+/** All consultation CTA labels that should fire Lead */
+export const META_LEAD_CTA_LABELS = [
+  HERO.ctaPrimary,
+  CONTACT_CTA.button,
+  CONTACT_SECTION.cta,
+  PORTFOLIO_CTA.button,
+] as const;
+
+const LOG_PREFIX = '[Blango Meta Pixel]';
 
 declare global {
   interface Window {
@@ -105,11 +115,37 @@ export function trackMetaPageView(): void {
   window.fbq('track', 'PageView');
 }
 
-export function trackMetaLead(source: string): void {
+export function matchesConsultationCtaLabel(text: string): boolean {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  return META_LEAD_CTA_LABELS.some((label) => normalized.includes(label));
+}
+
+export function isConsultationCtaElement(el: Element): boolean {
+  return (
+    el.closest(`[data-meta-lead="${META_LEAD_CONSULTATION_ATTR}"]`) !== null ||
+    matchesConsultationCtaLabel(elementText(el))
+  );
+}
+
+/** Fires Meta standard Lead event — fbq('track', 'Lead') */
+export function trackMetaLead(
+  source: string,
+  options?: { logCta?: boolean; logForm?: boolean },
+): void {
   if (!getMetaPixelId() || !window.fbq) {
+    console.warn(`${LOG_PREFIX} Lead skipped — pixel not ready (${source})`);
     return;
   }
-  window.fbq('track', 'Lead', { content_name: source });
+
+  if (options?.logCta) {
+    console.log(`${LOG_PREFIX} CTA clicked`);
+  }
+  if (options?.logForm) {
+    console.log(`${LOG_PREFIX} Contact form submitted`);
+  }
+
+  window.fbq('track', 'Lead');
+  console.log(`${LOG_PREFIX} Lead event fired`, `(${source})`);
 }
 
 function isWhatsAppHref(href: string): boolean {
@@ -125,7 +161,7 @@ function elementText(el: Element): string {
   return (el.textContent ?? '').replace(/\s+/g, ' ').trim();
 }
 
-/** Document-level handler for WhatsApp links and consultation CTA. */
+/** Document-level handler for consultation CTAs, WhatsApp links, and related clicks. */
 export function handleMetaLeadClick(event: MouseEvent): void {
   if (!getMetaPixelId()) {
     return;
@@ -136,19 +172,14 @@ export function handleMetaLeadClick(event: MouseEvent): void {
     return;
   }
 
+  if (isConsultationCtaElement(target)) {
+    trackMetaLead('consultation_cta', { logCta: true });
+    return;
+  }
+
   const anchor = target.closest('a[href]');
   if (anchor instanceof HTMLAnchorElement && anchor.href && isWhatsAppHref(anchor.href)) {
     trackMetaLead('whatsapp_click');
     return;
-  }
-
-  const clickable = target.closest('a, button');
-  if (!clickable) {
-    return;
-  }
-
-  const text = elementText(clickable);
-  if (text.includes(META_LEAD_CONSULTATION_CTA)) {
-    trackMetaLead('consultation_cta');
   }
 }
