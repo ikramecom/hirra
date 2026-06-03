@@ -26,7 +26,7 @@ export function ContactSection({ variant = 'standalone' }: ContactSectionProps) 
       id="contact"
       className={cn(
         'contact-section relative overflow-hidden',
-        isPage ? 'py-12 sm:py-16' : 'pt-28 sm:pt-36 lg:pt-44 pb-12 sm:pb-14 lg:pb-16',
+        isPage ? 'contact-section-page py-8 sm:py-16' : 'pt-28 sm:pt-36 lg:pt-44 pb-12 sm:pb-14 lg:pb-16',
       )}
       aria-labelledby={isPage ? undefined : 'contact-title'}
     >
@@ -37,7 +37,10 @@ export function ContactSection({ variant = 'standalone' }: ContactSectionProps) 
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-          className={cn('contact-panel mx-auto text-center', isPage ? 'max-w-5xl' : 'max-w-5xl')}
+          className={cn(
+            'mx-auto text-center',
+            isPage ? 'contact-page-channels max-w-5xl' : 'contact-panel max-w-5xl',
+          )}
         >
           {!isPage ? (
             <>
@@ -56,8 +59,8 @@ export function ContactSection({ variant = 'standalone' }: ContactSectionProps) 
 
           <div
             className={cn(
-              'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5',
-              isPage ? 'mt-0 lg:grid-cols-4' : 'mt-12 lg:grid-cols-4',
+              'contact-channels-grid grid gap-3 sm:gap-5',
+              isPage ? 'grid-cols-2 lg:grid-cols-4' : 'mt-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
             )}
           >
             {CONTACT_SECTION.channels.map((channel) => {
@@ -88,18 +91,22 @@ export function ContactSection({ variant = 'standalone' }: ContactSectionProps) 
                       isEmail && 'contact-channel-icon-email',
                     )}
                   >
-                    <Icon className="h-5 w-5 text-gold" strokeWidth={1.75} />
+                    <Icon className="h-4 w-4 text-gold sm:h-5 sm:w-5" strokeWidth={1.75} />
                   </span>
-                  <span className="font-heading text-base font-semibold text-pearl">{label}</span>
-                  {isWhatsApp ? (
-                    <PhoneNumber className="phone-number--centered font-sans text-xs text-gold/75" />
-                  ) : isEmail ? (
-                    <BusinessEmail className="business-email--centered font-sans text-xs text-gold/75" />
-                  ) : (
-                    <span dir="ltr" className="font-sans text-xs text-gold/75">
-                      {hint}
-                    </span>
-                  )}
+                  <span className="contact-channel-label font-heading text-sm font-semibold text-pearl sm:text-base">
+                    {label}
+                  </span>
+                  <span className={cn('contact-channel-hint', isWhatsApp && 'contact-channel-hint-wa')}>
+                    {isWhatsApp ? (
+                      <PhoneNumber className="phone-number--centered font-sans text-[10px] text-gold/75 sm:text-xs" />
+                    ) : isEmail ? (
+                      <BusinessEmail className="business-email--centered font-sans text-[10px] text-gold/75 sm:text-xs" />
+                    ) : (
+                      <span dir="ltr" className="font-sans text-[10px] text-gold/75 sm:text-xs">
+                        {hint}
+                      </span>
+                    )}
+                  </span>
                   {isWhatsApp ? (
                     <span className="contact-channel-badge">الأولوية</span>
                   ) : null}

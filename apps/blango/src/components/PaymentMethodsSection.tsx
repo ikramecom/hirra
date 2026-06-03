@@ -1,12 +1,17 @@
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
+import { cn } from '@/lib/cn';
 import { PAYMENT_METHODS } from '@/lib/sections-data';
 
-export function PaymentMethodsSection() {
+interface PaymentMethodsSectionProps {
+  compact?: boolean;
+}
+
+export function PaymentMethodsSection({ compact = false }: PaymentMethodsSectionProps) {
   return (
     <section
       id="payment-methods"
-      className="payment-trust-band"
+      className={cn('payment-trust-band', compact && 'payment-trust-band-compact')}
       aria-labelledby="payment-methods-title"
     >
       <div className="container-content">

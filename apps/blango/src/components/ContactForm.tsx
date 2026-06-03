@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
+import { cn } from '@/lib/cn';
 import { CONTACT_FORM, WHATSAPP } from '@/lib/sections-data';
 
-export function ContactForm() {
+interface ContactFormProps {
+  compact?: boolean;
+}
+
+export function ContactForm({ compact = false }: ContactFormProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -28,11 +33,16 @@ export function ContactForm() {
   };
 
   return (
-    <div className="contact-form-panel mx-auto max-w-xl">
-      <h2 className="font-heading text-xl font-bold text-pearl sm:text-2xl">{CONTACT_FORM.title}</h2>
-      <p className="type-body mt-2 text-smoke">{CONTACT_FORM.subtitle}</p>
+    <div className={cn('contact-form-panel mx-auto max-w-xl', compact && 'contact-form-panel-compact')}>
+      <h2 className="contact-form-title font-heading text-xl font-bold text-pearl sm:text-2xl">
+        {CONTACT_FORM.title}
+      </h2>
+      <p className="contact-form-subtitle type-body mt-2 text-smoke">{CONTACT_FORM.subtitle}</p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className={cn('contact-form-fields mt-8 space-y-5', compact && 'contact-form-fields-compact')}
+      >
         <div>
           <label htmlFor="contact-name" className="contact-form-label">
             {CONTACT_FORM.name}
@@ -90,14 +100,14 @@ export function ContactForm() {
             id="contact-message"
             name="message"
             required
-            rows={4}
+            rows={compact ? 3 : 4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={CONTACT_FORM.messagePlaceholder}
             className="contact-form-input contact-form-textarea"
           />
         </div>
-        <button type="submit" className="btn-primary w-full sm:w-auto">
+        <button type="submit" className="contact-form-submit btn-primary w-full sm:w-auto">
           {CONTACT_FORM.submit}
           <Send className="h-4 w-4 opacity-85" aria-hidden />
         </button>

@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 import { Menu, MessageCircle, X } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/cn';
-import { NAV_ITEMS, ROUTES } from '@/lib/routes';
+import { MOBILE_NAV_ITEMS, NAV_ITEMS, ROUTES } from '@/lib/routes';
 import { INSTAGRAM, WHATSAPP } from '@/lib/sections-data';
 import { BrandLogo } from '@/components/brand/BrandLogo';
-import { PhoneNumber } from '@/components/common/PhoneNumber';
 import { InstagramIcon } from '@/components/icons/InstagramIcon';
 
 const NAV_SOCIAL_ICON_CLASS = 'h-[14px] w-[14px]';
@@ -36,26 +35,15 @@ export function Header() {
 
   const closeMobile = () => setMobileOpen(false);
 
-  const isNavActive = (to: string, end?: boolean, scrollTo?: string) => {
-    if (scrollTo) {
-      return location.pathname === ROUTES.home && location.hash === `#${scrollTo}`;
-    }
+  const isNavActive = (to: string, end?: boolean) => {
     if (end) {
       return location.pathname === to;
     }
     return location.pathname === to || location.pathname.startsWith(`${to}/`);
   };
 
-  const handleNavClick = (to: string, scrollTo?: string) => {
+  const handleNavClick = (to: string) => {
     closeMobile();
-    if (scrollTo) {
-      if (location.pathname !== ROUTES.home) {
-        navigate(ROUTES.home, { state: { scrollTo } });
-      } else {
-        document.getElementById(scrollTo)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      return;
-    }
     navigate(to);
   };
 
@@ -159,7 +147,7 @@ export function Header() {
         <div className="mobile-nav-panel md:hidden" role="dialog" aria-modal="true" aria-label="قائمة التنقل">
           <div className="mobile-nav-drawer container-content">
             <nav className="mobile-nav-links" aria-label="التنقل الرئيسي">
-              {NAV_ITEMS.map((item) => (
+              {MOBILE_NAV_ITEMS.map((item) => (
                 <button
                   key={item.label}
                   type="button"
@@ -174,43 +162,27 @@ export function Header() {
               ))}
             </nav>
 
-            <div className="mobile-nav-contact">
-              <p className="mobile-nav-contact-label">تواصل</p>
-              <div className="mobile-nav-contact-panel">
-                <a
-                  href={WHATSAPP.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mobile-nav-contact-item mobile-nav-contact-item-wa"
-                  onClick={closeMobile}
-                >
-                  <span className="mobile-nav-contact-icon mobile-nav-contact-icon-wa" aria-hidden>
-                    <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.75} />
-                  </span>
-                  <span className="mobile-nav-contact-text">
-                    <span className="mobile-nav-contact-title">{WHATSAPP.label}</span>
-                    <PhoneNumber className="mobile-nav-contact-hint" />
-                  </span>
-                </a>
-                <div className="mobile-nav-contact-divider" aria-hidden />
-                <a
-                  href={INSTAGRAM.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mobile-nav-contact-item"
-                  onClick={closeMobile}
-                >
-                  <span className="mobile-nav-contact-icon" aria-hidden>
-                    <InstagramIcon className="h-3.5 w-3.5" />
-                  </span>
-                  <span className="mobile-nav-contact-text">
-                    <span className="mobile-nav-contact-title">{INSTAGRAM.label}</span>
-                    <span dir="ltr" className="mobile-nav-contact-hint">
-                      {INSTAGRAM.handle}
-                    </span>
-                  </span>
-                </a>
-              </div>
+            <div className="mobile-nav-social" aria-label="تواصل سريع">
+              <a
+                href={WHATSAPP.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-nav-social-btn mobile-nav-social-btn-wa"
+                aria-label={`${WHATSAPP.label} — ${WHATSAPP.number}`}
+                onClick={closeMobile}
+              >
+                <MessageCircle className="h-4 w-4" strokeWidth={1.75} />
+              </a>
+              <a
+                href={INSTAGRAM.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-nav-social-btn"
+                aria-label={`${INSTAGRAM.label} — ${INSTAGRAM.handle}`}
+                onClick={closeMobile}
+              >
+                <InstagramIcon className="h-4 w-4" />
+              </a>
             </div>
           </div>
         </div>

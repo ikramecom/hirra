@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Target, TrendingUp } from 'lucide-react';
+import { cn } from '@/lib/cn';
 import { getStoreDomain } from '@/lib/portfolio-assets';
 import { PORTFOLIO } from '@/lib/sections-data';
 import { PortfolioPreview } from './PortfolioPreview';
@@ -16,7 +17,7 @@ export function PortfolioSection({ embedded = false }: PortfolioSectionProps) {
       id="portfolio"
       variant="elevated"
       labelledBy="portfolio-title"
-      className={embedded ? 'section-embedded' : ''}
+      className={cn(embedded && 'section-embedded section-portfolio-page')}
     >
       {!embedded ? (
         <SectionHeader
@@ -27,7 +28,7 @@ export function PortfolioSection({ embedded = false }: PortfolioSectionProps) {
         />
       ) : null}
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-16 lg:gap-20">
+      <div className="portfolio-projects-list mx-auto flex max-w-6xl flex-col gap-16 lg:gap-20">
         {PORTFOLIO.projects.map((project, index) => (
           <motion.article
             key={project.id}
@@ -37,7 +38,9 @@ export function PortfolioSection({ embedded = false }: PortfolioSectionProps) {
             transition={{ duration: 0.85, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="case-study group"
           >
-            <div className={`grid items-center gap-10 lg:grid-cols-2 lg:gap-14 ${index % 2 === 1 ? '' : ''}`}>
+            <div
+              className={`case-study-layout grid items-center gap-10 lg:grid-cols-2 lg:gap-14 ${index % 2 === 1 ? '' : ''}`}
+            >
               <div className={`relative ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
                 <div className="case-study-devices relative px-1 pt-1">
                   <div className="case-study-desktop overflow-hidden rounded-2xl border border-white/[0.1] bg-[#0a0a0a] shadow-2xl">
@@ -62,28 +65,32 @@ export function PortfolioSection({ embedded = false }: PortfolioSectionProps) {
                 </div>
               </div>
 
-              <div className={index % 2 === 1 ? 'lg:order-1' : ''}>
-                <span className="type-label text-gold/75">{project.industry}</span>
-                <h3 className="mt-3 font-heading text-2xl font-bold text-pearl sm:text-3xl">{project.nameAr}</h3>
+              <div className={`case-study-copy ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                <span className="case-study-industry type-label text-gold/75">{project.industry}</span>
+                <h3 className="case-study-title mt-3 font-heading text-2xl font-bold text-pearl sm:text-3xl">
+                  {project.nameAr}
+                </h3>
 
-                <div className="mt-6 space-y-4">
-                  <div className="flex items-start gap-3">
+                <div className="case-study-meta mt-6 space-y-4">
+                  <div className="case-study-goal flex items-start gap-3">
                     <Target className="mt-0.5 h-4 w-4 shrink-0 text-gold/70" strokeWidth={1.75} />
                     <div>
                       <p className="type-label mb-1 text-gold/60">الهدف</p>
-                      <p className="type-body text-smoke">{project.goal}</p>
+                      <p className="case-study-goal-text type-body text-smoke">{project.goal}</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
+                  <div className="case-study-result-row flex items-start gap-3">
                     <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-gold/70" strokeWidth={1.75} />
                     <div>
                       <p className="type-label mb-1 text-gold/60">النتيجة</p>
-                      <p className="font-heading text-lg font-semibold text-gold-light">{project.result}</p>
+                      <p className="case-study-result font-heading text-lg font-semibold text-gold-light sm:text-xl">
+                        {project.result}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8 flex items-center gap-2 font-arabic text-sm text-smoke opacity-0 transition-all duration-500 group-hover:opacity-100">
+                <div className="case-study-explore mt-8 flex items-center gap-2 font-arabic text-sm text-smoke opacity-0 transition-all duration-500 group-hover:opacity-100">
                   <span>استكشف المشروع</span>
                   <ArrowUpRight className="h-4 w-4 text-gold" />
                 </div>
@@ -92,6 +99,7 @@ export function PortfolioSection({ embedded = false }: PortfolioSectionProps) {
           </motion.article>
         ))}
       </div>
+
     </SectionShell>
   );
 }

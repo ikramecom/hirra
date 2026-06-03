@@ -1,16 +1,24 @@
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/cn';
 
 interface PageBannerProps {
   eyebrow: string;
   title: string;
   subtitle?: string;
+  /** Tighter hero for inner pages (e.g. pricing). */
+  compact?: boolean;
 }
 
-export function PageBanner({ eyebrow, title, subtitle }: PageBannerProps) {
+export function PageBanner({ eyebrow, title, subtitle, compact = false }: PageBannerProps) {
   return (
-    <section className="page-banner relative overflow-hidden border-b border-white/[0.05] pt-28 sm:pt-32 lg:pt-36">
+    <section
+      className={cn(
+        'page-banner relative overflow-hidden border-b border-white/[0.05] pt-28 sm:pt-32 lg:pt-36',
+        compact && 'page-banner-compact',
+      )}
+    >
       <div className="page-banner-glow pointer-events-none absolute inset-0" aria-hidden />
-      <div className="container-content relative pb-14 sm:pb-16 lg:pb-20">
+      <div className="container-content relative page-banner-inner pb-14 sm:pb-16 lg:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

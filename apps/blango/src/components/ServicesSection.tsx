@@ -90,7 +90,7 @@ export function ServicesSection({ variant = 'full', embedded = false }: Services
       </ul>
 
       {isPreview ? (
-        <div className="mt-8 text-center sm:mt-9">
+        <div className="services-home-cta text-center">
           <Link to={ROUTES.services} className="btn-secondary btn-secondary-glass inline-flex gap-2">
             {SERVICES.viewAll}
             <ArrowLeft className="h-4 w-4 opacity-85" aria-hidden />

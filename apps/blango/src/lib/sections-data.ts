@@ -51,7 +51,7 @@ export const SERVICE_ITEMS = [
     id: 'whatsapp',
     title: 'ربط واتساب',
     description:
-      'تواصل مباشر مع عملائك عبر واتساب. زر عائم، رسائل جاهزة، وتجربة سلسة على الهاتف.',
+      'ربط واتساب مع إعداد رسائل تلقائية عبر n8n لتسهيل التواصل، استقبال الطلبات، وتتبع العملاء بشكل احترافي.',
     icon: MessageCircle,
   },
   {
@@ -89,7 +89,7 @@ export const SERVICES = {
   title: 'حلول رقمية متكاملة',
   subtitle: 'من الفكرة إلى الإطلاق — كل ما يحتاجه مشروعك للنجاح على الإنترنت.',
   previewTitle: 'خدماتنا الأساسية',
-  previewSubtitle: 'أهم ما يحتاجه مشروعك للانطلاق بسرعة — باقي الخدمات على صفحة الخدمات.',
+  previewSubtitle: 'أربع خدمات للانطلاق — الباقي على صفحة الخدمات.',
   viewAll: 'عرض كل الخدمات',
   items: SERVICE_ITEMS,
   featuredIds: FEATURED_SERVICE_IDS,
@@ -165,9 +165,10 @@ export type PortfolioTheme = 'perfume' | 'fashion' | 'cosmetics';
 export const PORTFOLIO_PREVIEW = {
   eyebrow: 'أعمالنا',
   title: 'مشاريع مختارة',
-  subtitle: 'نتائج حقيقية لعلامات تجارية — جودة تتحدث عن نفسها.',
-  viewAll: 'عرض كل المشاريع',
-  featuredCount: 3,
+  subtitle: 'مثال واحد من أعمالنا — المزيد على صفحة الأعمال.',
+  viewAll: 'شاهد كل الأعمال',
+  featuredCount: 1,
+  featuredProjectId: 'perfume',
 } as const;
 
 export const PORTFOLIO = {
@@ -178,10 +179,10 @@ export const PORTFOLIO = {
     {
       id: 'perfume',
       theme: 'perfume' as PortfolioTheme,
-      nameAr: 'علامة عطور فاخرة',
-      industry: 'عطور وفاخرة',
+      nameAr: 'Maison Élégance',
+      industry: 'متجر عطور فاخر',
       goal: 'رفع طلبات واتساب وزيادة مبيعات التجزئة',
-      result: '+340% طلبات واتساب في 30 يوم',
+      result: '+180% طلبات واتساب في 30 يوم',
     },
     {
       id: 'cosmetics',
@@ -189,7 +190,7 @@ export const PORTFOLIO = {
       nameAr: 'علامة مستحضرات تجميل فاخرة',
       industry: 'تجميل وعناية',
       goal: 'إطلاق حملات Meta بصفحة بيع محسّنة',
-      result: 'ROAS 4.2x من الإعلانات',
+      result: '3.1x ROAS من الإعلانات',
     },
     {
       id: 'fashion',
@@ -197,9 +198,15 @@ export const PORTFOLIO = {
       nameAr: 'علامة أزياء فاخرة',
       industry: 'أزياء وفاخرة',
       goal: 'إطلاق متجر إلكتروني يعكس فخامة المجموعة',
-      result: '+280% مبيعات أونلاين في 60 يوم',
+      result: '+220% مبيعات أونلاين في 60 يوم',
     },
   ],
+} as const;
+
+export const PORTFOLIO_CTA = {
+  title: 'لنصنع حضوراً رقمياً يليق بعلامتك',
+  subtitle: 'نصمم مواقع وصفحات بيع احترافية تساعدك على جذب العملاء وتحقيق نتائج حقيقية.',
+  button: 'احجز استشارة مجانية',
 } as const;
 
 export const BEFORE_AFTER = {
@@ -349,17 +356,12 @@ export const FAQ_ITEMS = [
 
 export const CONTACT_CTA = {
   title: 'جاهز للانطلاق؟',
-  text: 'احصل على موقع احترافي يساعد مشروعك على النمو.',
+  text: 'موقع احترافي لمشروعك — ابدأ باستشارة مجانية.',
   button: 'اطلب استشارة مجانية',
 } as const;
 
 export const FOOTER = {
-  tagline: 'وكالة رقمية — تصميم مواقع وصفحات بيع تحقق النتائج.',
-  cta: 'احجز استشارة مجانية',
-  contact: [
-    { key: 'whatsapp' as const, label: WHATSAPP.label, href: WHATSAPP.url, hint: WHATSAPP.number },
-    { key: 'instagram' as const, label: INSTAGRAM.label, href: INSTAGRAM.url, hint: INSTAGRAM.handle },
-    { key: 'facebook' as const, label: FACEBOOK.label, href: FACEBOOK.url, hint: FACEBOOK.handle },
-    { key: 'email' as const, label: EMAIL.label, href: EMAIL.href, hint: EMAIL.address },
-  ],
+  brand: 'BLANGO STUDIO',
+  description: 'وكالة رقمية متخصصة في تصميم المواقع وصفحات البيع',
+  copyright: '© 2026 Blango Studio',
 } as const;

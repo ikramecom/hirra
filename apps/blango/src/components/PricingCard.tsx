@@ -47,7 +47,7 @@ export function PricingCard({ plan, index }: PricingCardProps) {
 
       <div className="pricing-card-sheen pointer-events-none absolute inset-0 rounded-card opacity-0 transition-opacity duration-700 group-hover:opacity-100" aria-hidden />
 
-      <div className={cn('relative flex flex-1 flex-col p-7 sm:p-8 lg:p-9', isPopular && 'pt-12 sm:pt-12')}>
+      <div className={cn('relative flex flex-1 flex-col pricing-card-body p-7 sm:p-8 lg:p-9', isPopular && 'pt-12 sm:pt-12')}>
         <header>
           <p className="type-label tracking-widest text-smoke/70">{plan.name}</p>
 
@@ -67,7 +67,7 @@ export function PricingCard({ plan, index }: PricingCardProps) {
 
         <p className="type-label mb-6">{PRICING_LABELS.included}</p>
 
-        <ul className="mb-8 flex flex-1 flex-col gap-3.5">
+        <ul className="pricing-card-features mb-8 flex flex-1 flex-col gap-3.5">
           {plan.features.map((feature) => (
             <PricingFeatureItem key={feature}>{feature}</PricingFeatureItem>
           ))}

@@ -6,15 +6,15 @@ import { PAGE_HEADERS } from '@/lib/sections-data';
 
 export function ContactPage() {
   return (
-    <>
-      <PageBanner {...PAGE_HEADERS.contact} />
+    <div className="contact-page">
+      <PageBanner {...PAGE_HEADERS.contact} compact />
       <ContactSection variant="page" />
-      <section className="contact-form-section relative border-t border-white/[0.05] py-16 sm:py-20">
+      <section className="contact-form-section contact-page-form relative border-t border-white/[0.05]">
         <div className="container-content">
-          <ContactForm />
+          <ContactForm compact />
         </div>
       </section>
-      <PaymentMethodsSection />
-    </>
+      <PaymentMethodsSection compact />
+    </div>
   );
 }

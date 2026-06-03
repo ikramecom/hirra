@@ -18,8 +18,8 @@ export function FinalCtaSection() {
         <h2 id="final-cta-title" className="type-section-title">
           {CONTACT_CTA.title}
         </h2>
-        <p className="type-subtitle mx-auto mt-5 max-w-lg">{CONTACT_CTA.text}</p>
-        <div className="final-cta-actions mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+        <p className="home-cta-text type-subtitle mx-auto max-w-lg">{CONTACT_CTA.text}</p>
+        <div className="final-cta-actions flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
           <a
             href={WHATSAPP.url}
             target="_blank"
