@@ -336,10 +336,10 @@ serve(async (req: Request) => {
     });
   }
 
-  // ── shipping + COD fee + totals ────────────────────────────────────
-  const shipping = subtotal >= 199 ? 0 : 18;
-  const codFee = data.payment_method === 'cod' ? 10 : 0;
-  const total = subtotal + shipping + codFee;
+  // ── shipping + COD fee + totals (delivery included in product price) ─
+  const shipping = 0;
+  const codFee = 0;
+  const total = subtotal;
 
   // ── create order ───────────────────────────────────────────────────
   const { data: order, error: orderErr } = await supabase

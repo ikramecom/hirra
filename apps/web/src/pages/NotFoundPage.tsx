@@ -10,10 +10,12 @@ export default function NotFoundPage() {
       <Helmet>
         <title>404 — {t('brand.name')}</title>
       </Helmet>
-      <div className="container-content py-20 text-center space-y-5 max-w-md mx-auto">
-        <div className="text-7xl">🐾</div>
-        <h1 className="text-3xl font-bold text-walnut heading-display">{t('errors.not_found')}</h1>
-        <Button to="/">{t('errors.back_home')}</Button>
+      <div className="container-content py-24 text-center space-y-6 max-w-md mx-auto">
+        <p className="font-display text-6xl text-gold/40 tabular">404</p>
+        <h1 className="text-h2 heading-display text-pearl">{t('errors.not_found')}</h1>
+        <Button to="/" variant="gold">
+          {t('errors.back_home')}
+        </Button>
       </div>
     </>
   );

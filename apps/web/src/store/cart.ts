@@ -80,7 +80,7 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'hirra:cart',
+      name: 'riyanaluxe:cart',
       partialize: (state) => ({ lines: state.lines }),
     },
   ),

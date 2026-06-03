@@ -1,0 +1,109 @@
+{
+  "brand": {
+    "name": "RIYANALUXE",
+    "tagline": "L'art du foyer parfumé"
+  },
+  "nav": {
+    "home": "Accueil",
+    "shop": "Collection",
+    "mabkhara": "Mabkhara",
+    "bundles": "Collections prestige",
+    "about": "La maison",
+    "track": "Suivi commande",
+    "contact": "Contact",
+    "language": "ع"
+  },
+  "announce": {
+    "free_shipping": "Livraison offerte",
+    "cod_available": "Paiement à la livraison",
+    "gift": "Emballage cadeau soigné"
+  },
+  "cta": {
+    "add_to_cart": "Ajouter au panier",
+    "buy_now": "Commander",
+    "checkout": "Finaliser",
+    "continue_shopping": "Continuer",
+    "order_via_whatsapp": "Nous écrire sur WhatsApp",
+    "discover_mabkhara": "La Mabkhara",
+    "view_collection": "Toute la collection"
+  },
+  "trust": {
+    "cod_label": "Paiement à la livraison",
+    "happy_customers": "+4000 clients satisfaits",
+    "nationwide_delivery": "Livraison rapide dans tout le Maroc",
+    "cod_at_delivery": "Paiement à la livraison",
+    "fast_shipping": "Livraison 2–5 jours",
+    "guarantee": "Garantie 14 jours",
+    "arabic_support": "WhatsApp · réponse rapide",
+    "secure_payment": "Commande sécurisée",
+    "maghreb_crafted": "Maison marocaine"
+  },
+  "cart": {
+    "empty": "Votre panier est vide",
+    "empty_subtitle": "Commencez par la Mabkhara Luxe — le cœur du rituel.",
+    "browse": "Voir la collection",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "cod_fee": "Frais de livraison",
+    "total": "Total",
+    "remove": "Retirer",
+    "free_shipping_progress": "Encore {{amount}} pour la livraison offerte",
+    "free_shipping_unlocked": "Livraison offerte",
+    "items_count_one": "1 article",
+    "items_count_other": "{{count}} articles"
+  },
+  "checkout": {
+    "title": "Finaliser la commande",
+    "phone": "Téléphone",
+    "phone_placeholder": "06XXXXXXXX",
+    "name": "Nom complet",
+    "name_placeholder": "Votre nom",
+    "city": "Ville",
+    "city_placeholder": "Saisissez votre ville",
+    "submit": "Confirmer la commande",
+    "cod_reassurance": "Paiement à la livraison — confirmation WhatsApp avant expédition.",
+    "your_order": "Votre commande"
+  },
+  "validation": {
+    "name_short": "Nom trop court",
+    "phone_invalid": "Numéro marocain invalide (06 ou 07XXXXXXXX)",
+    "city_required": "Indiquez votre ville"
+  },
+  "order_confirmation": {
+    "title": "Merci {{name}}",
+    "subtitle": "Commande enregistrée — nous vous contactons très vite",
+    "order_number": "N° de commande",
+    "next_step": "Ouvrez WhatsApp pour confirmer les détails",
+    "open_whatsapp": "WhatsApp",
+    "track_order": "Suivre la commande",
+    "continue_shopping": "Continuer"
+  },
+  "errors": {
+    "generic": "Un problème est survenu. Réessayez ou contactez-nous.",
+    "not_found": "Article introuvable",
+    "back_home": "Accueil",
+    "checkout_not_configured": "La commande n’est pas connectée à la base. Contactez-nous sur WhatsApp.",
+    "checkout_resolve_failed": "Impossible de synchroniser le panier. Rechargez la page.",
+    "checkout_submit_failed": "Impossible d’enregistrer la commande. Vérifiez vos informations."
+  },
+  "bundles": {
+    "eyebrow": "RIYANALUXE",
+    "add": "Ajouter la sélection",
+    "order_now": "Commander maintenant",
+    "detail_eyebrow": "Sélection RIYANALUXE",
+    "includes": "Contenu de la sélection",
+    "not_found": "Cette sélection est introuvable.",
+    "not_found_hint": "Parcourez les collections prestige depuis la page dédiée."
+  },
+  "footer": {
+    "rights": "Tous droits réservés",
+    "policies": "Informations",
+    "shipping": "Livraison",
+    "refunds": "Retours",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "faq": "FAQ",
+    "address": "Siège",
+    "address_value": "Casablanca, Maroc"
+  }
+}

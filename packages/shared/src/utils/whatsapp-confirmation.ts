@@ -1,31 +1,42 @@
 /**
- * WhatsApp COD confirmation copy (storefront → customer opens chat after checkout).
- * Matches Supabase `hirra_record_whatsapp_confirmation_opened` logged template (Arabic).
+ * WhatsApp confirmation copy (storefront → customer opens chat after checkout).
  */
-export function buildHirraOrderConfirmationWhatsAppText(
+export function buildRiyanaluxeOrderConfirmationWhatsAppText(
   orderNumber: string,
-  locale: 'ar' | 'en',
+  locale: 'ar' | 'fr' | 'en',
 ): string {
   const n = orderNumber?.trim() || '';
   if (locale === 'ar') {
-    return `مرحباً 👋
-شكراً لطلبك من هِرّة 🐾
+    return `السلام عليكم 👋
+شكراً على طلبيتك من ريانا لوكس
 
-رقم الطلب:
+رقم الطلبية:
 ${n}
 
-يرجى الرد لتأكيد الطلب:
+عافاك جاوب باش نأكدو:
 1️⃣ تأكيد
 2️⃣ تعديل
 3️⃣ إلغاء`;
   }
+  if (locale === 'fr') {
+    return `Bonjour 👋
+Merci pour votre commande RIYANALUXE
+
+N° de commande :
+${n}
+
+Merci de répondre pour confirmer :
+1️⃣ Confirmer
+2️⃣ Modifier
+3️⃣ Annuler`;
+  }
   return `Hello 👋
-Thank you for your order from Hirra 🐾
+Thank you for your order from RIYANALUXE
 
 Order number:
 ${n}
 
-Please reply to confirm your order:
+Please reply to confirm:
 1️⃣ Confirm
 2️⃣ Change
 3️⃣ Cancel`;

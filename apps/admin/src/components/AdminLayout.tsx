@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Package, LogOut } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { clearApiKey } from '@/lib/api';
-import { HirraMark } from './HirraMark';
+import { RiyanaluxeMark } from './RiyanaluxeMark';
 
 const nav = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -15,10 +15,10 @@ export function AdminLayout() {
       <aside className="w-64 shrink-0 border-r border-walnut/10 bg-whisper flex flex-col">
         <div className="p-6 border-b border-walnut/10">
           <div className="flex items-center gap-3 text-emerald">
-            <HirraMark className="h-9 w-9" />
+            <RiyanaluxeMark className="h-9 w-9" />
             <div>
               <p className="font-display text-xl font-semibold tracking-[0.12em] text-walnut">
-                HIRRA
+                RIYANALUXE
               </p>
               <p className="text-[10px] uppercase tracking-[0.2em] text-brass font-semibold">
                 Admin · KSA

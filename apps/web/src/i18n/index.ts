@@ -2,40 +2,42 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import ar from './ar.json';
-import en from './en.json';
+import fr from './fr.json';
+import { westernDigitsPostProcessor } from './westernDigitsPostProcessor';
 
-const STORAGE_KEY = 'hirra:locale';
+const STORAGE_KEY = 'riyanaluxe:locale';
 
-const storedLocale = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-const initialLocale = (storedLocale === 'en' ? 'en' : 'ar') as 'ar' | 'en';
+const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+const initialLocale = stored === 'fr' ? 'fr' : 'ar';
 
-i18n.use(initReactI18next).init({
+i18n.use(westernDigitsPostProcessor).use(initReactI18next).init({
   resources: {
     ar: { translation: ar },
-    en: { translation: en },
+    fr: { translation: fr },
   },
   lng: initialLocale,
   fallbackLng: 'ar',
-  interpolation: {
-    escapeValue: false,
-  },
+  interpolation: { escapeValue: false },
+  postProcess: ['westernDigits'],
 });
 
-// Set <html> dir + lang to match initial locale
-if (typeof document !== 'undefined') {
-  document.documentElement.lang = initialLocale;
-  document.documentElement.dir = initialLocale === 'ar' ? 'rtl' : 'ltr';
+function applyDir(lng: string) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.lang = lng;
+  document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
 }
 
-// Listen for changes and update <html>
+applyDir(initialLocale);
+
 i18n.on('languageChanged', (lng) => {
-  if (typeof document !== 'undefined') {
-    document.documentElement.lang = lng;
-    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
-  }
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem(STORAGE_KEY, lng);
-  }
+  applyDir(lng);
+  localStorage.setItem(STORAGE_KEY, lng);
 });
 
 export default i18n;
+
+export type StoreLocale = 'ar' | 'fr';
+
+export function useStoreLocale(): StoreLocale {
+  return (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
+}

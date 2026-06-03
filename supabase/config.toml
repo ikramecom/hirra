@@ -1,7 +1,7 @@
-# Supabase project config — Hirra
+# Supabase project config — RIYANALUXE
 # Run `supabase link --project-ref YOUR_REF` to connect to remote.
 
-project_id = "hirra"
+project_id = "riyanaluxe"
 
 [api]
 enabled = true
@@ -30,7 +30,7 @@ file_size_limit = "50MiB"
 [auth]
 enabled = true
 site_url = "http://localhost:5173"
-additional_redirect_urls = ["https://hirra.com"]
+additional_redirect_urls = ["https://riyanaluxe.ma"]
 jwt_expiry = 3600
 enable_signup = true
 

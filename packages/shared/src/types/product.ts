@@ -35,6 +35,8 @@ export interface ProductVariant {
   name_ar: string;
   name_en: string;
   sku: string | null;
+  /** Variant-specific product photo (client / fallback; optional in API rows) */
+  image_url?: string | null;
   inventory_count: number;
   is_active: boolean;
   display_order: number;

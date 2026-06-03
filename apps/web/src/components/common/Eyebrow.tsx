@@ -3,25 +3,20 @@ import { cn } from '@/lib/cn';
 
 interface EyebrowProps {
   children: ReactNode;
-  tone?: 'brass' | 'cream';
+  tone?: 'gold' | 'pearl' | 'brass' | 'cream';
   className?: string;
   as?: 'span' | 'p' | 'div';
 }
 
-/**
- * Editorial eyebrow — small uppercase label that sits above big headings.
- *
- * Replaces the dropshipping "🐾 Now launching" pill with a proper magazine-
- * style category mark. Brass on light surfaces; cream on dark sections.
- */
-export function Eyebrow({ children, tone = 'brass', className, as: As = 'span' }: EyebrowProps) {
+export function Eyebrow({ children, tone = 'gold', className, as: As = 'span' }: EyebrowProps) {
   return (
     <As
       className={cn(
-        'inline-flex items-center gap-2 text-eyebrow uppercase font-semibold',
-        tone === 'brass' ? 'text-brass' : 'text-cream/70',
+        'inline-flex items-center gap-2 text-eyebrow uppercase font-semibold tracking-[0.22em]',
+        (tone === 'gold' || tone === 'brass') && 'text-gold',
+        (tone === 'pearl' || tone === 'cream') && 'text-champagne/70',
         'before:content-[""] before:inline-block before:h-px before:w-6',
-        tone === 'brass' ? 'before:bg-brass/60' : 'before:bg-cream/30',
+        tone === 'pearl' || tone === 'cream' ? 'before:bg-champagne/25' : 'before:bg-gold/40',
         className,
       )}
     >

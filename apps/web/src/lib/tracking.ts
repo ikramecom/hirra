@@ -15,7 +15,7 @@ type EventName =
 
 interface TrackPayload {
   value?: number;
-  currency?: 'SAR';
+  currency?: 'SAR' | 'MAD';
   content_ids?: string[];
   content_name?: string;
   content_type?: 'product' | 'product_group';
@@ -124,7 +124,7 @@ export function captureUtm(): {
   const hasAny = Object.values(utm).some(Boolean);
   if (hasAny) {
     try {
-      sessionStorage.setItem('hirra:utm', JSON.stringify(utm));
+      sessionStorage.setItem('riyanaluxe:utm', JSON.stringify(utm));
     } catch {
       // ignore quota errors
     }
@@ -132,7 +132,7 @@ export function captureUtm(): {
   }
 
   try {
-    const stored = sessionStorage.getItem('hirra:utm');
+    const stored = sessionStorage.getItem('riyanaluxe:utm');
     if (stored) return JSON.parse(stored);
   } catch {
     // ignore

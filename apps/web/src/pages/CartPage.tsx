@@ -13,21 +13,15 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/common/Eyebrow';
+import { PremiumBadge } from '@/components/brand/PremiumBadge';
 import { useCartStore } from '@/store/cart';
-import { formatSAR, FREE_SHIPPING_THRESHOLD_SAR } from '@hirra/shared';
+import { formatMAD } from '@hirra/shared';
 import { track } from '@/lib/tracking';
+import type { StoreLocale } from '@/i18n';
 
-/**
- * Full-page cart.
- *
- * Two-column on desktop (lines | summary). Summary is sticky on desktop and
- * carries the persistent COD reassurance. Free-shipping bar uses the same
- * brass→emerald gradient as the drawer for visual consistency.
- */
 export default function CartPage() {
   const { t, i18n } = useTranslation();
-  const locale = i18n.language as 'ar' | 'en';
+  const locale = (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
   const navigate = useNavigate();
 
   const lines = useCartStore((s) => s.lines);
@@ -36,15 +30,12 @@ export default function CartPage() {
   const subtotal = useCartStore((s) => s.subtotal());
   const itemCount = useCartStore((s) => s.itemCount());
 
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD_SAR - subtotal);
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD_SAR ? 0 : 18;
-  const total = subtotal + shipping;
-  const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD_SAR) * 100);
+  const total = subtotal;
 
   const handleCheckout = () => {
     track.initiateCheckout({
       value: subtotal,
-      currency: 'SAR',
+      currency: 'MAD',
       num_items: itemCount,
     });
     navigate('/checkout');
@@ -59,9 +50,9 @@ export default function CartPage() {
       </Helmet>
 
       <section className="container-content pt-10 md:pt-14 pb-4">
-        <div className="space-y-2">
-          <Eyebrow>{locale === 'ar' ? 'سلتك' : 'Your bag'}</Eyebrow>
-          <h1 className="text-h1 heading-display text-walnut">
+        <div className="space-y-3">
+          <PremiumBadge tone="pearl">{locale === 'ar' ? 'سلتك' : 'Votre sélection'}</PremiumBadge>
+          <h1 className="text-h1 heading-display text-pearl">
             {itemCount > 0
               ? t('cart.items_count', { count: itemCount })
               : t('cart.empty')}
@@ -71,19 +62,17 @@ export default function CartPage() {
 
       <div className="container-content pb-16 md:pb-24">
         {lines.length === 0 ? (
-          <div className="bg-whisper rounded-card p-12 text-center space-y-5 max-w-xl mx-auto border border-walnut/10">
-            <div className="h-16 w-16 mx-auto rounded-full bg-cream grid place-items-center">
-              <ShoppingBag className="h-7 w-7 text-walnut/40" />
+          <div className="luxury-card p-12 text-center space-y-5 max-w-xl mx-auto">
+            <div className="h-16 w-16 mx-auto rounded-full border border-gold/20 grid place-items-center">
+              <ShoppingBag className="h-7 w-7 text-gold/50" />
             </div>
-            <div className="space-y-1.5 max-w-md mx-auto">
-              <p className="text-xl font-semibold heading-display text-walnut">
-                {t('cart.empty')}
-              </p>
-              <p className="text-walnut/65 leading-relaxed">{t('cart.empty_subtitle')}</p>
+            <div className="space-y-2 max-w-md mx-auto">
+              <p className="text-xl heading-display text-pearl">{t('cart.empty')}</p>
+              <p className="text-smoke leading-relaxed">{t('cart.empty_subtitle')}</p>
             </div>
             <Button
               to="/products"
-              variant="primary"
+              variant="gold"
               size="lg"
               rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
             >
@@ -92,20 +81,22 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-12">
-            {/* Lines */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {lines.map((line) => {
                 const name = locale === 'ar' ? line.name_ar : line.name_en;
                 const variantName =
                   locale === 'ar' ? line.variant_name_ar : line.variant_name_en;
+                const itemHref = line.bundle_id
+                  ? `/bundles/${line.slug}`
+                  : `/products/${line.slug}`;
                 return (
                   <article
                     key={line.key}
-                    className="bg-whisper rounded-card border border-walnut/10 p-4 md:p-5 flex gap-4"
+                    className="luxury-card p-4 md:p-5 flex gap-4"
                   >
                     <Link
-                      to={`/products/${line.slug}`}
-                      className="h-24 w-24 md:h-28 md:w-28 rounded-xl overflow-hidden bg-sand-soft shrink-0"
+                      to={itemHref}
+                      className="h-24 w-24 md:h-28 md:w-28 rounded-xl overflow-hidden bg-ink border border-gold/15 shrink-0"
                     >
                       {line.image_url ? (
                         <img
@@ -114,51 +105,51 @@ export default function CartPage() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full grid place-items-center text-3xl text-walnut/30">
-                          ◇
+                        <div className="h-full w-full grid place-items-center text-gold/30 font-display">
+                          R
                         </div>
                       )}
                     </Link>
                     <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-start justify-between gap-2">
-                        <Link to={`/products/${line.slug}`} className="min-w-0">
-                          <h3 className="font-semibold text-walnut leading-tight hover:text-emerald transition clamp-2">
+                        <Link to={itemHref} className="min-w-0">
+                          <h3 className="font-semibold text-pearl leading-tight hover:text-gold transition line-clamp-2">
                             {name}
                           </h3>
                           {variantName ? (
-                            <p className="text-sm text-walnut/55 mt-0.5">{variantName}</p>
+                            <p className="text-sm text-smoke mt-0.5">{variantName}</p>
                           ) : null}
                         </Link>
                         <button
                           onClick={() => removeLine(line.key)}
-                          className="text-walnut/45 hover:text-signal transition p-1.5 -m-1.5"
+                          className="text-smoke hover:text-champagne transition p-1.5 -m-1.5"
                           aria-label={t('cart.remove')}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                       <div className="flex items-center justify-between pt-1">
-                        <div className="inline-flex items-center bg-cream rounded-lg border border-walnut/10">
+                        <div className="inline-flex items-center bg-ink rounded-lg border border-gold/20">
                           <button
                             onClick={() => updateQuantity(line.key, line.quantity - 1)}
-                            className="p-2 text-walnut hover:text-emerald transition"
+                            className="p-2 text-champagne hover:text-gold transition"
                             aria-label="Decrease quantity"
                           >
                             <Minus className="h-3.5 w-3.5" />
                           </button>
-                          <span className="text-sm font-semibold w-8 text-center tabular">
+                          <span className="text-sm font-semibold w-8 text-center tabular text-pearl">
                             {line.quantity}
                           </span>
                           <button
                             onClick={() => updateQuantity(line.key, line.quantity + 1)}
-                            className="p-2 text-walnut hover:text-emerald transition"
+                            className="p-2 text-champagne hover:text-gold transition"
                             aria-label="Increase quantity"
                           >
                             <Plus className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <p className="font-bold text-emerald text-lg tabular">
-                          {formatSAR(line.unit_price_sar * line.quantity, locale)}
+                        <p className="font-display text-gold text-lg tabular">
+                          {formatMAD(line.unit_price_sar * line.quantity, locale)}
                         </p>
                       </div>
                     </div>
@@ -168,64 +159,31 @@ export default function CartPage() {
 
               <Link
                 to="/products"
-                className="inline-flex items-center gap-1 text-emerald hover:text-emerald-dark text-sm font-semibold pt-2"
+                className="inline-flex items-center gap-1 text-gold hover:text-champagne text-sm font-medium pt-2 transition"
               >
                 <ArrowRight className="h-4 w-4 rtl:rotate-180 -scale-x-100 rtl:scale-x-100" />
-                {locale === 'ar' ? 'إكمال التسوق' : 'Continue shopping'}
+                {locale === 'ar' ? 'إكمال التسوق' : 'Continuer'}
               </Link>
             </div>
 
-            {/* Summary */}
             <aside className="lg:sticky lg:top-24 lg:self-start space-y-4">
-              <div className="bg-whisper rounded-card border border-walnut/10 p-6 space-y-5">
-                <Eyebrow>{locale === 'ar' ? 'الملخص' : 'Summary'}</Eyebrow>
+              <div className="luxury-card p-6 space-y-5">
+                <PremiumBadge tone="pearl">
+                  {locale === 'ar' ? 'الملخص' : 'Récapitulatif'}
+                </PremiumBadge>
 
-                {/* Free shipping progress */}
-                <div className="space-y-2">
-                  <p className="text-xs text-walnut/80 font-medium">
-                    {remaining > 0
-                      ? t('cart.free_shipping_progress', {
-                          amount: formatSAR(remaining, locale),
-                        })
-                      : t('cart.free_shipping_unlocked')}
-                  </p>
-                  <div className="h-1.5 bg-sand rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-brass via-emerald to-emerald-dark transition-all duration-700 ease-out"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                </div>
+                <p className="text-xs text-gold font-semibold">{t('cart.free_shipping_unlocked')}</p>
 
-                <div className="space-y-2 text-sm border-t border-walnut/10 pt-4">
-                  <div className="flex justify-between">
-                    <span className="text-walnut/70">{t('cart.subtotal')}</span>
-                    <span className="font-semibold text-walnut tabular">
-                      {formatSAR(subtotal, locale)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-walnut/70">{t('cart.shipping')}</span>
-                    <span className="font-semibold text-walnut tabular">
-                      {shipping === 0
-                        ? locale === 'ar'
-                          ? 'مجاني'
-                          : 'Free'
-                        : formatSAR(shipping, locale)}
-                    </span>
-                  </div>
-                  <div className="border-t border-walnut/10 pt-3 flex justify-between items-baseline">
-                    <span className="text-base font-semibold text-walnut">
-                      {t('cart.total')}
-                    </span>
-                    <span className="text-2xl font-bold text-emerald tabular">
-                      {formatSAR(total, locale)}
-                    </span>
-                  </div>
+                <div className="border-t border-gold/10 pt-4 flex justify-between items-baseline">
+                  <span className="text-base font-medium text-pearl">{t('cart.total')}</span>
+                  <span className="text-2xl font-display text-gold tabular">
+                    {formatMAD(total, locale)}
+                  </span>
                 </div>
 
                 <Button
                   onClick={handleCheckout}
+                  variant="gold"
                   size="lg"
                   fullWidth
                   rightIcon={<ArrowRight className="h-5 w-5 rtl:rotate-180" />}
@@ -233,17 +191,17 @@ export default function CartPage() {
                   {t('cta.checkout')}
                 </Button>
 
-                <div className="grid grid-cols-1 gap-2 text-xs text-walnut/70 pt-1">
+                <div className="grid grid-cols-1 gap-2 text-xs text-smoke pt-1">
                   <span className="inline-flex items-center gap-2">
-                    <Banknote className="h-3.5 w-3.5 text-emerald" />
+                    <Banknote className="h-3.5 w-3.5 text-gold/70" />
                     {t('checkout.cod_reassurance')}
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <Truck className="h-3.5 w-3.5 text-emerald" />
+                    <Truck className="h-3.5 w-3.5 text-gold/70" />
                     {t('trust.fast_shipping')}
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 text-emerald" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-gold/70" />
                     {t('trust.guarantee')}
                   </span>
                 </div>

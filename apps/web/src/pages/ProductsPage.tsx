@@ -1,77 +1,106 @@
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
-import { ProductCard } from '@/components/product/ProductCard';
-import { Eyebrow } from '@/components/common/Eyebrow';
-import { GuaranteePromise } from '@/components/common/GuaranteePromise';
-import { ProductCardSkeleton } from '@/components/common/Skeleton';
+import { motion } from 'framer-motion';
+import { formatMAD } from '@hirra/shared';
 import { useProducts } from '@/hooks/useProducts';
+import type { StoreLocale } from '@/i18n';
+import { SectionHeader } from '@/components/brand/SectionHeader';
+import { ProductCardLuxury } from '@/components/brand/ProductCardLuxury';
+import { PremiumBadge } from '@/components/brand/PremiumBadge';
+import { Button } from '@/components/ui/Button';
+import { RIYANALUXE_ASSETS } from '@/lib/assets';
 
 export default function ProductsPage() {
   const { t, i18n } = useTranslation();
-  const locale = i18n.language as 'ar' | 'en';
-  const { data: products = [], isLoading } = useProducts();
+  const locale = (i18n.language === 'fr' ? 'fr' : 'ar') as StoreLocale;
+  const { data: products = [] } = useProducts();
+  const hero = products.find((p) => p.is_hero);
+  const others = products.filter((p) => !p.is_hero);
 
   return (
     <>
       <Helmet>
         <title>
-          {locale === 'ar' ? 'المجموعة' : 'The Collection'} — {t('brand.name')}
+          {t('nav.shop')} — {t('brand.name')}
         </title>
-        <meta
-          name="description"
-          content={
-            locale === 'ar'
-              ? 'تسوقي مجموعة هِرّة الفاخرة — رولر شعر القطط، حصيرة حبس الرمل، ونافورة الماء.'
-              : 'Shop the full Hirra collection — premium cat hair roller, litter trap mat, and water fountain.'
-          }
-        />
       </Helmet>
+      <div className="section-y cinematic-gradient">
+        <div className="container-content space-y-20">
+          <SectionHeader
+            eyebrow={locale === 'ar' ? 'المجموعة' : 'Collection'}
+            title={t('nav.shop')}
+            lead={
+              locale === 'ar'
+                ? 'ثلاث قطع — طقوس واحدة. المبخرة في القلب، والباقي يكمل أناقة المنزل.'
+                : 'Trois pièces — un seul rituel. La Mabkhara au centre.'
+            }
+            align="center"
+          />
 
-      {/* Editorial header — cream surface, centered, eyebrow + serif H1.
-          Replaces the old emerald hero band so the page feels like a
-          curated boutique rather than a category page. */}
-      <section className="bg-cream">
-        <div className="container-content pt-12 md:pt-20 pb-10 md:pb-14 text-center space-y-4">
-          <Eyebrow as="div" className="justify-center">
-            {locale === 'ar' ? 'المجموعة' : 'The Collection'}
-          </Eyebrow>
-          <h1 className="text-hero heading-display text-walnut text-balance max-w-3xl mx-auto">
-            {locale === 'ar'
-              ? 'ثلاث قطع. اختيرت بحب. صنعت لتدوم.'
-              : 'Three pieces. Chosen with care. Made to last.'}
-          </h1>
-          <p className="max-w-xl mx-auto text-walnut/70 leading-relaxed text-pretty">
-            {locale === 'ar'
-              ? 'لا تشكيلة ضخمة، ولا فوضى. فقط الأساسيات اللي يستاهلها بيتك السعودي.'
-              : 'No bloated catalogue. Just the essentials your Saudi home deserves.'}
-          </p>
+          {hero ? (
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Link
+                to={`/products/${hero.slug}`}
+                className="luxury-card-hover grid lg:grid-cols-2 gap-0 overflow-hidden group"
+              >
+                <div className="relative frame-gold aspect-[4/5] lg:aspect-auto lg:min-h-[420px] overflow-hidden">
+                  <img
+                    src={hero.images[0]?.url ?? RIYANALUXE_ASSETS.products.mabkhara.main}
+                    alt=""
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-obsidian/70 via-transparent to-gold/[0.05]" />
+                  <div className="absolute top-6 start-6">
+                    <PremiumBadge tone="gold">
+                      {locale === 'ar' ? 'الأيقونة' : 'Iconique'}
+                    </PremiumBadge>
+                  </div>
+                </div>
+                <div className="p-10 lg:p-14 flex flex-col justify-center space-y-6">
+                  <p className="text-eyebrow text-gold tracking-[0.3em]">
+                    {locale === 'ar' ? 'مبخرة لوكس' : 'MABKHARA LUXE'}
+                  </p>
+                  <h2 className="text-h1 heading-display text-pearl text-balance">
+                    {locale === 'ar' ? hero.name_ar : hero.name_en}
+                  </h2>
+                  {hero.subtitle_ar || hero.subtitle_en ? (
+                    <p className="prose-luxury text-lg max-w-md">
+                      {locale === 'ar' ? hero.subtitle_ar : hero.subtitle_en}
+                    </p>
+                  ) : null}
+                  <p className="text-2xl font-display text-gold tabular">
+                    {formatMAD(hero.price_sar, locale)}
+                  </p>
+                  <Button to={`/products/${hero.slug}`} variant="gold" size="lg" className="w-fit">
+                    {locale === 'ar' ? 'اكتشف المبخرة' : 'Découvrir'}
+                  </Button>
+                </div>
+              </Link>
+            </motion.div>
+          ) : null}
+
+          {others.length > 0 ? (
+            <div className="space-y-10">
+              <SectionHeader
+                eyebrow={locale === 'ar' ? 'مكملات' : 'Compléments'}
+                title={
+                  locale === 'ar' ? 'لإكمال طقوس المنزل' : 'Pour compléter le rituel'
+                }
+              />
+              <div className="grid sm:grid-cols-2 gap-6 md:gap-8">
+                {others.map((p) => (
+                  <ProductCardLuxury key={p.id} product={p} locale={locale} />
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
-      </section>
-
-      <section className="container-content pb-16 md:pb-24">
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {[0, 1, 2].map((i) => (
-              <ProductCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-20 text-walnut/70">
-            <p>{locale === 'ar' ? 'لا توجد منتجات حالياً.' : 'No products available right now.'}</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-14 md:mt-20">
-          <GuaranteePromise />
-        </div>
-      </section>
+      </div>
     </>
   );
 }

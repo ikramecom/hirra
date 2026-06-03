@@ -1,37 +1,26 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Truck, Gift, Banknote } from 'lucide-react';
 
-/**
- * Editorial top strip — soft cream-on-walnut, single line, slow rotation.
- *
- * Tightened from the previous emerald block: less shouty, more "fashion
- * house broadcast bar". Uses fade-in keying off the index for a calm change.
- */
 export function AnnouncementBar() {
   const { t } = useTranslation();
-  const messages = [
-    t('announce.free_shipping'),
-    t('announce.cod_available'),
-    t('announce.fast_delivery'),
-  ];
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % messages.length);
-    }, 5000);
-    return () => clearInterval(id);
-  }, [messages.length]);
-
   return (
-    <div className="bg-walnut text-cream/90 text-xs sm:text-sm py-2.5 px-4 overflow-hidden">
-      <p
-        key={index}
-        className="text-center animate-fade-in tracking-wide"
-        aria-live="polite"
-      >
-        {messages[index]}
-      </p>
+    <div className="bg-ink border-b border-gold/10 text-champagne text-xs md:text-sm py-2.5">
+      <div className="container-content flex items-center justify-center gap-6 flex-wrap">
+        <span className="inline-flex items-center gap-1.5">
+          <Truck className="h-3.5 w-3.5 text-gold" />
+          {t('announce.free_shipping')}
+        </span>
+        <span className="hidden sm:inline text-gold/30">|</span>
+        <span className="inline-flex items-center gap-1.5">
+          <Banknote className="h-3.5 w-3.5 text-gold" />
+          {t('announce.cod_available')}
+        </span>
+        <span className="hidden sm:inline text-gold/30">|</span>
+        <span className="inline-flex items-center gap-1.5">
+          <Gift className="h-3.5 w-3.5 text-gold" />
+          {t('announce.gift')}
+        </span>
+      </div>
     </div>
   );
 }

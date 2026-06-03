@@ -3,26 +3,32 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import {
   FALLBACK_PRODUCTS,
-  getFallbackProductBySlug,
   isSupabaseConfigured,
-  withLocalProductImageFallback,
 } from '@/lib/fallback-data';
+import {
+  loadProductForSlug,
+  mergeWithLocalProduct,
+  resolveCanonicalProductSlug,
+  toProductWithDetails,
+} from '@/lib/product-utils';
+import { isRiyanaluxeProductSlug } from '@hirra/shared';
 import type { Product, ProductImage, ProductVariant, ProductWithDetails } from '@hirra/shared';
 
+function fallbackCatalog(): ProductWithDetails[] {
+  return FALLBACK_PRODUCTS.map((row) =>
+    toProductWithDetails({ ...row, product_images: row.product_images ?? [] }),
+  );
+}
+
 /**
- * List all active products with their primary image.
- *
- * Falls back to the local catalogue (`FALLBACK_PRODUCTS`) whenever Supabase
- * isn't configured or returns no rows — keeps the storefront working in
- * preview mode.
+ * List all active RIYANALUXE products.
  */
 export function useProducts() {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      if (!isSupabaseConfigured()) {
-        return FALLBACK_PRODUCTS;
-      }
+      const local = fallbackCatalog();
+      if (!isSupabaseConfigured()) return local;
 
       try {
         const { data, error } = await supabase
@@ -33,63 +39,67 @@ export function useProducts() {
 
         if (error) throw error;
         const rows = (data ?? []) as Array<Product & { product_images: ProductImage[] }>;
-        if (rows.length === 0) return FALLBACK_PRODUCTS;
-        return rows.map((row) => withLocalProductImageFallback(row));
+        if (rows.length === 0) return local;
+
+        const mapped = rows
+          .filter((row) => isRiyanaluxeProductSlug(row.slug))
+          .map((row) => toProductWithDetails(row));
+
+        return mapped.length > 0 ? mapped : local;
       } catch (err) {
-        console.warn('[hirra] useProducts falling back to local catalogue:', err);
-        return FALLBACK_PRODUCTS;
+        console.warn('[riyanaluxe] useProducts falling back to local catalogue:', err);
+        return local;
       }
     },
   });
 }
 
 /**
- * Fetch a single product (with all images + variants) by slug.
- *
- * Falls back to the local catalogue when Supabase isn't configured or the
- * query fails.
+ * Fetch a single product — local catalog first, Supabase enriches when available.
  */
 export function useProduct(slug: string | undefined) {
-  return useQuery({
-    queryKey: ['product', slug],
-    queryFn: async () => {
-      if (!slug) throw new Error('slug required');
+  const canonicalSlug = resolveCanonicalProductSlug(slug);
+  const localProduct = loadProductForSlug(canonicalSlug);
 
-      if (!isSupabaseConfigured()) {
-        return getFallbackProductBySlug(slug);
-      }
+  return useQuery({
+    queryKey: ['product', canonicalSlug],
+    enabled: Boolean(canonicalSlug),
+    initialData: localProduct ?? undefined,
+    placeholderData: () => localProduct ?? undefined,
+    queryFn: async (): Promise<ProductWithDetails | null> => {
+      if (!canonicalSlug) return null;
+
+      const local = loadProductForSlug(canonicalSlug);
+      if (!isSupabaseConfigured()) return local;
 
       try {
         const { data, error } = await supabase
           .from('products')
           .select('*, product_images(*), product_variants(*)')
-          .eq('slug', slug)
+          .eq('slug', canonicalSlug)
           .eq('is_active', true)
           .maybeSingle();
 
         if (error) throw error;
-        if (!data) return getFallbackProductBySlug(slug);
+        if (!data) return local;
 
-        const product = withLocalProductImageFallback(
+        const remote = toProductWithDetails(
           data as Product & {
             product_images: ProductImage[];
             product_variants: ProductVariant[];
           },
         );
 
-        const images = [...product.product_images].sort(
-          (a, b) => a.display_order - b.display_order,
-        );
-        const variants = [...product.product_variants]
-          .filter((v) => v.is_active)
-          .sort((a, b) => a.display_order - b.display_order);
-
-        return { ...product, images, variants } as ProductWithDetails;
+        const merged = mergeWithLocalProduct(remote, local);
+        return merged ?? local;
       } catch (err) {
-        console.warn(`[hirra] useProduct(${slug}) falling back to local catalogue:`, err);
-        return getFallbackProductBySlug(slug);
+        console.warn(`[riyanaluxe] useProduct(${canonicalSlug}) falling back:`, err);
+        return local;
       }
     },
-    enabled: Boolean(slug),
+    select: (data) => {
+      if (!canonicalSlug || !isRiyanaluxeProductSlug(canonicalSlug)) return data;
+      return data ?? loadProductForSlug(canonicalSlug);
+    },
   });
 }

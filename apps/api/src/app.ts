@@ -22,7 +22,7 @@ export function createApp() {
   app.use(express.json({ limit: '1mb' }));
 
   app.get('/health', (_req, res) => {
-    res.json({ ok: true, service: 'hirra-api' });
+    res.json({ ok: true, service: 'riyanaluxe-api' });
   });
 
   app.use('/api', requireAdmin);

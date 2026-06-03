@@ -159,9 +159,9 @@ export async function createOrderFromCheckout(payload: CheckoutPayload) {
     return { ok: false as const, status: 400, error: 'No valid items' };
   }
 
-  const shipping = subtotal >= 199 ? 0 : 18;
-  const codFee = payload.payment_method === 'cod' ? 10 : 0;
-  const total = subtotal + shipping + codFee;
+  const shipping = 0;
+  const codFee = 0;
+  const total = subtotal;
 
   const { data: order, error: orderErr } = await supabase
     .from('orders')

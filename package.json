@@ -1,8 +1,8 @@
 {
-  "name": "hirra",
+  "name": "riyanaluxe",
   "version": "0.1.0",
   "private": true,
-  "description": "HIRRA — Premium Saudi Cat-Owner Essentials. Self-hosted React + Supabase storefront.",
+  "description": "RIYANALUXE — Premium Maghreb home fragrance storefront (React + Supabase).",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -11,7 +11,9 @@
     "dev": "npm run dev --workspace=apps/web",
     "dev:api": "npm run dev --workspace=apps/api",
     "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:blango": "npm run dev --workspace=apps/blango",
     "build": "npm run build --workspace=apps/web",
+    "build:blango": "npm run build --workspace=apps/blango",
     "build:api": "npm run build --workspace=apps/api",
     "build:admin": "npm run build --workspace=apps/admin",
     "preview": "npm run preview --workspace=apps/web",
@@ -27,7 +29,7 @@
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
   },
-  "author": "Hirra",
+  "author": "RIYANALUXE",
   "license": "UNLICENSED",
   "devDependencies": {
     "pg": "^8.20.0"

@@ -31,8 +31,8 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_SITE_URL: ${{ secrets.VITE_SITE_URL }}
-          VITE_BRAND_NAME: 'Hirra'
-          VITE_BRAND_NAME_AR: 'هِرّة'
+          VITE_BRAND_NAME: 'RIYANALUXE'
+          VITE_BRAND_NAME_AR: 'ريانا لوكس'
           VITE_WHATSAPP_PHONE: ${{ secrets.VITE_WHATSAPP_PHONE }}
           VITE_GA4_ID: ${{ secrets.VITE_GA4_ID }}
           VITE_HOTJAR_ID: ${{ secrets.VITE_HOTJAR_ID }}

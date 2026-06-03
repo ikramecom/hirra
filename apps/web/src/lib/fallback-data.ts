@@ -1,14 +1,17 @@
 /**
- * Local fallback catalogue.
- *
- * Used by the storefront when Supabase isn't connected yet (e.g. local preview
- * with the placeholder VITE_SUPABASE_URL=https://test.supabase.co), or when a
- * Supabase query fails for any reason.
- *
- * Mirrors `supabase/migrations/004_seed_data.sql` — keep them in sync if you
- * change product copy or pricing.
+ * RIYANALUXE local catalogue — mirrors supabase/migrations/008_riyana_magreb_catalog.sql
+ * Prices in `price_sar` are Moroccan dirhams (MAD).
  */
 
+import {
+  HERO_SLUG,
+  LEGACY_BUNDLE_SLUG_REDIRECTS,
+  LEGACY_PRODUCT_SLUG_REDIRECTS,
+  RIYANALUXE_BUNDLE_SLUGS,
+  RIYANALUXE_PRODUCT_SLUGS,
+  isRiyanaluxeBundleSlug,
+  isRiyanaluxeProductSlug,
+} from '@hirra/shared';
 import type {
   Bundle,
   BundleWithProducts,
@@ -19,338 +22,317 @@ import type {
   Review,
 } from '@hirra/shared';
 
+import { RIYANALUXE_ASSETS } from '@/lib/assets';
+
+export { HERO_SLUG };
+
 const NOW = new Date().toISOString();
 
-/* -------------------------------------------------------------------------- */
-/* Detect whether Supabase is "really" configured                              */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Returns true only when the env vars look like a real Supabase project
- * (anything other than the placeholder `test` / `test.supabase.co` values).
- */
 export function isSupabaseConfigured(): boolean {
   const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-
   if (!url || !key) return false;
   if (url.includes('test.supabase.co')) return false;
   if (key === 'test' || key.length < 20) return false;
   return true;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Products                                                                    */
-/* -------------------------------------------------------------------------- */
+type ProductImageEntry = { url: string; alt_ar: string; alt_en: string };
 
-/**
- * Editorial product photography lives in `/public/brand/`. Each entry is the
- * cover shot for a product and is wired below into `FALLBACK_PRODUCTS`. The
- * shape stays compatible with the Supabase `product_images` rows, so when
- * real Supabase data ships these locally-bundled URLs are simply replaced.
- */
-const PRODUCT_IMAGES: Record<string, { url: string; alt_ar: string; alt_en: string }> = {
-  'hirra-pro-roller': {
-    url: '/brand/hirra-pro-roller.png',
-    alt_ar: 'هِرّة برو رولر — سيليكون فاخر بلون زيتي على عباية سوداء حريرية',
-    alt_en: 'Hirra Pro Roller — premium olive silicone resting on a folded black silk abaya',
-  },
-  'hirra-honeycomb-mat': {
-    url: '/brand/hirra-honeycomb-mat.png',
-    alt_ar: 'حصيرة هِرّة العسلية لحبس الرمل — على رخام سعودي',
-    alt_en: 'Hirra Honeycomb Litter Trap Mat — on Saudi marble flooring',
-  },
-  'hirra-aurora-fountain': {
-    url: '/brand/hirra-aurora-fountain.png',
-    alt_ar: 'نافورة هِرّة أورورا — تصميم سيراميك فاخر مع تفاصيل نحاسية',
-    alt_en: 'Hirra Aurora Fountain — premium ceramic with brass detailing',
-  },
+const PRODUCT_IMAGES: Record<string, ProductImageEntry[]> = {
+  'riyanaluxe-mabkhara-luxe': [
+    {
+      url: RIYANALUXE_ASSETS.products.mabkhara.main,
+      alt_ar: 'ريانا لوكس — مبخرة لوكس',
+      alt_en: 'RIYANALUXE Mabkhara Luxe',
+    },
+    {
+      url: RIYANALUXE_ASSETS.products.mabkhara.closeup,
+      alt_ar: 'تفاصيل المبخرة مع دخان البخور',
+      alt_en: 'Mabkhara close-up with bakhoor smoke',
+    },
+    {
+      url: RIYANALUXE_ASSETS.products.mabkhara.gift,
+      alt_ar: 'تغليف هدية فاخر',
+      alt_en: 'Luxury gift presentation',
+    },
+    {
+      url: RIYANALUXE_ASSETS.products.mabkhara.salon,
+      alt_ar: 'طقوس الضيافة في صالون مغربي',
+      alt_en: 'Moroccan salon hospitality ritual',
+    },
+  ],
+  'riyanaluxe-pierre-seche': [
+    {
+      url: RIYANALUXE_ASSETS.products.pierreSeche.main,
+      alt_ar: 'ريانا لوكس — بيير سيك',
+      alt_en: 'RIYANALUXE Pierre Sèche',
+    },
+    {
+      url: RIYANALUXE_ASSETS.products.pierreSeche.demo,
+      alt_ar: 'بساط حمام يجف في ثوانٍ',
+      alt_en: 'Quick-dry stone bath mat',
+    },
+  ],
+  'riyanaluxe-armoire-seche': [
+    {
+      url: RIYANALUXE_ASSETS.products.armoireSeche.main,
+      alt_ar: 'ريانا لوكس — أرمور سيك',
+      alt_en: 'RIYANALUXE Armoire Sèche',
+    },
+    {
+      url: RIYANALUXE_ASSETS.products.armoireSeche.closet,
+      alt_ar: 'دولاب محمي من الرطوبة',
+      alt_en: 'Wardrobe protected from humidity',
+    },
+  ],
 };
 
-/** True when URL is empty or a generated placeholder — use local /brand/ assets instead. */
-export function isMissingOrPlaceholderProductImageUrl(
-  url: string | null | undefined,
-): boolean {
+export function isMissingOrPlaceholderProductImageUrl(url: string | null | undefined): boolean {
   const u = (url ?? '').trim();
   if (!u) return true;
   if (/placehold\.co/i.test(u)) return true;
+  if (/\.svg$/i.test(u) && !u.includes('/images/riyana/')) return true;
   return false;
 }
 
-/**
- * When Supabase `product_images` rows omit URLs or still point at placeholders,
- * merge in the original local `/brand/` photography by product slug.
- */
 export function withLocalProductImageFallback<T extends Product & { product_images: ProductImage[] }>(
   product: T,
 ): T {
+  if (!isRiyanaluxeProductSlug(product.slug)) return product;
   const local = PRODUCT_IMAGES[product.slug];
   if (!local) return product;
-
   const existing = product.product_images ?? [];
-  if (existing.length === 0) {
+  if (existing.length === 0 || existing.every((img) => isMissingOrPlaceholderProductImageUrl(img.url))) {
     return {
       ...product,
-      product_images: [
-        {
-          id: `local-fallback-${product.id}`,
-          product_id: product.id,
-          url: local.url,
-          alt_ar: local.alt_ar,
-          alt_en: local.alt_en,
-          display_order: 1,
-          is_primary: true,
-        },
-      ],
+      product_images: local.map((entry, i) => ({
+        id: `local-${product.id}-${i}`,
+        product_id: product.id,
+        url: entry.url,
+        alt_ar: entry.alt_ar,
+        alt_en: entry.alt_en,
+        display_order: i + 1,
+        is_primary: i === 0,
+      })),
     } as T;
   }
-
-  const mapped = existing.map((img) =>
-    isMissingOrPlaceholderProductImageUrl(img.url)
-      ? { ...img, url: local.url, alt_ar: local.alt_ar, alt_en: local.alt_en }
-      : img,
-  );
-
-  return { ...product, product_images: mapped } as T;
-}
-
-function makeImage(productId: string, slug: string, fallbackLabel: string): ProductImage {
-  const entry = PRODUCT_IMAGES[slug];
   return {
-    id: `img-${productId}`,
-    product_id: productId,
-    url:
-      entry?.url ??
-      `https://placehold.co/1080x1080/F4ECE0/0E5C42?text=${encodeURIComponent(fallbackLabel)}`,
-    alt_ar: entry?.alt_ar ?? fallbackLabel,
-    alt_en: entry?.alt_en ?? fallbackLabel,
-    display_order: 1,
-    is_primary: true,
-  };
+    ...product,
+    product_images: existing.map((img, i) =>
+      isMissingOrPlaceholderProductImageUrl(img.url) && local[i]
+        ? { ...img, url: local[i].url, alt_ar: local[i].alt_ar, alt_en: local[i].alt_en }
+        : img,
+    ),
+  } as T;
 }
 
-const ROLLER_VARIANTS: ProductVariant[] = [
+function makeImages(productId: string, slug: string): ProductImage[] {
+  const entries = PRODUCT_IMAGES[slug] ?? [];
+  return entries.map((entry, i) => ({
+    id: `img-${productId}-${i}`,
+    product_id: productId,
+    url: entry.url,
+    alt_ar: entry.alt_ar,
+    alt_en: entry.alt_en,
+    display_order: i + 1,
+    is_primary: i === 0,
+  }));
+}
+
+const MABKHARA_VARIANTS: ProductVariant[] = [
   {
-    id: 'var-roller-olive',
-    product_id: 'prod-hirra-pro-roller',
-    name_ar: 'زيتي',
-    name_en: 'Olive',
-    sku: 'HRR-PRO-001-OLV',
-    inventory_count: 20,
+    id: 'var-mbk-noir',
+    product_id: 'prod-riyanaluxe-mabkhara',
+    name_ar: 'أسود مطفي',
+    name_en: 'Matte Noir',
+    sku: 'RYN-MBK-NOIR',
+    image_url: RIYANALUXE_ASSETS.products.mabkhara.main,
+    inventory_count: 40,
     is_active: true,
     display_order: 1,
   },
   {
-    id: 'var-roller-cream',
-    product_id: 'prod-hirra-pro-roller',
-    name_ar: 'كريمي',
-    name_en: 'Cream',
-    sku: 'HRR-PRO-001-CRM',
-    inventory_count: 20,
+    id: 'var-mbk-or',
+    product_id: 'prod-riyanaluxe-mabkhara',
+    name_ar: 'ذهبي رملي',
+    name_en: 'Sable Gold',
+    sku: 'RYN-MBK-OR',
+    image_url: RIYANALUXE_ASSETS.products.mabkhara.gift,
+    inventory_count: 25,
     is_active: true,
     display_order: 2,
-  },
-  {
-    id: 'var-roller-walnut',
-    product_id: 'prod-hirra-pro-roller',
-    name_ar: 'بني داكن',
-    name_en: 'Walnut',
-    sku: 'HRR-PRO-001-WAL',
-    inventory_count: 10,
-    is_active: true,
-    display_order: 3,
   },
 ];
 
 export const FALLBACK_PRODUCTS: Array<Product & { product_images: ProductImage[] }> = [
   {
-    id: 'prod-hirra-pro-roller',
-    slug: 'hirra-pro-roller',
-    name_ar: 'هِرّة برو — رولر شعر القطط',
-    name_en: 'Hirra Pro Lint-Free Cat Hair Roller',
-    subtitle_ar: 'رولر سيليكون فاخر، قابل لإعادة الاستخدام',
-    subtitle_en: 'Premium reusable silicone — for the Saudi home',
+    id: 'prod-riyanaluxe-mabkhara',
+    slug: 'riyanaluxe-mabkhara-luxe',
+    name_ar: 'ريانا لوكس — مبخرة لوكس',
+    name_en: 'RIYANALUXE Mabkhara Luxe',
+    subtitle_ar: 'بخور عصري بلا فحم — عبق الدار وكرم الضيافة',
+    subtitle_en: 'Smokeless ritual — art of hospitality',
     description_ar:
-      'هِرّة برو رولر مصمم خصيصاً للبيت السعودي. سيليكون فاخر يلتقط شعر القطط بسحبة واحدة. قابل لإعادة الاستخدام إلى الأبد — لا أوراق لاصقة، لا هدر. آمن للعباية السوداء، السوفا المخمل، وكل أقمشة بيتك.',
+      'مبخرة كهربائية فاخرة بتسخين سريع، قفل أمان، ومنفذ Type-C. تصميم أسود مطفي مع تفاصيل ذهبية — للصالون، العيد، والهدايا التي تُذكر.',
     description_en:
-      'The Hirra Pro Roller is designed for the Saudi home. Premium food-grade silicone picks up cat hair in a single swipe. Reusable forever — no sticky paper, no waste. Safe on black abayas, velvet majlis sofas, and every fabric in your home.',
-    price_sar: 99,
-    compare_at_price_sar: 129,
-    cost_sar: 18,
-    sku: 'HRR-PRO-001',
-    inventory_count: 50,
+      'Premium electric mabkhara with rapid heat, safety lock, and Type-C charging. Matte black with gold details.',
+    price_sar: 249,
+    compare_at_price_sar: 349,
+    cost_sar: 95,
+    sku: 'RYN-MBK-001',
+    inventory_count: 80,
     is_active: true,
     is_hero: true,
     display_order: 1,
     created_at: NOW,
     updated_at: NOW,
-    product_images: [makeImage('prod-hirra-pro-roller', 'hirra-pro-roller', 'Hirra+Pro')],
+    product_images: makeImages('prod-riyanaluxe-mabkhara', 'riyanaluxe-mabkhara-luxe'),
   },
   {
-    id: 'prod-hirra-honeycomb-mat',
-    slug: 'hirra-honeycomb-mat',
-    name_ar: 'حصيرة هِرّة العسلية لحبس الرمل',
-    name_en: 'Hirra Honeycomb Litter Trap Mat XL',
-    subtitle_ar: 'حصيرة مزدوجة الطبقات تحبس كل حبة رمل',
-    subtitle_en: 'Double-layer mat that traps every grain',
+    id: 'prod-riyanaluxe-pierre',
+    slug: 'riyanaluxe-pierre-seche',
+    name_ar: 'ريانا لوكس — بيير سيك',
+    name_en: 'RIYANALUXE Pierre Sèche',
+    subtitle_ar: 'حجر طبيعي يشرب الماء في ثوانٍ',
+    subtitle_en: 'Natural stone — water vanishes in seconds',
     description_ar:
-      'حصيرة هِرّة العسلية بحجم XL (٧٥×٦٠ سم) تحبس كل حبة رمل قبل ما توصل لرخام بيتك. طبقتين: علوية بفتحات عسلية، وسفلية مقاومة للماء وعازلة للانزلاق. سهلة التنظيف بالنفض.',
-    description_en:
-      'The Hirra Honeycomb Mat XL (75×60 cm) traps every grain of litter before it reaches your marble floors. Two layers: a honeycomb top and a waterproof non-slip bottom. Clean it with a simple shake.',
-    price_sar: 119,
-    compare_at_price_sar: 149,
-    cost_sar: 28,
-    sku: 'HRR-MAT-001',
-    inventory_count: 30,
+      'بساط حمام من حجر الدياتوميت: امتصاص فوري، مانع للانزلاق، ومظهر فندقي يليق بمنزلك المغربي.',
+    description_en: 'Diatomite quick-dry stone bath mat: instant dry, anti-slip base.',
+    price_sar: 249,
+    compare_at_price_sar: 349,
+    cost_sar: 55,
+    sku: 'RYN-STM-001',
+    inventory_count: 100,
     is_active: true,
     is_hero: false,
     display_order: 2,
     created_at: NOW,
     updated_at: NOW,
-    product_images: [makeImage('prod-hirra-honeycomb-mat', 'hirra-honeycomb-mat', 'Hirra+Mat')],
+    product_images: makeImages('prod-riyanaluxe-pierre', 'riyanaluxe-pierre-seche'),
   },
   {
-    id: 'prod-hirra-aurora-fountain',
-    slug: 'hirra-aurora-fountain',
-    name_ar: 'نافورة هِرّة أورورا للقطط',
-    name_en: 'Hirra Aurora Cat Water Fountain',
-    subtitle_ar: 'نافورة هادئة بإضاءة LED — تشتغل ٣٠ يوم بشحنة واحدة',
-    subtitle_en: 'Silent LED fountain — 30 days per charge',
+    id: 'prod-riyanaluxe-armoire',
+    slug: 'riyanaluxe-armoire-seche',
+    name_ar: 'ريانا لوكس — أرمور سيك',
+    name_en: 'RIYANALUXE Armoire Sèche',
+    subtitle_ar: 'مزيل رطوبة الدولاب — صامت وأنيق',
+    subtitle_en: 'Wardrobe dehumidifier — quiet & refined',
     description_ar:
-      'نافورة هِرّة أورورا — ماء بارد متجدد لقطتك في حر الرياض. مضخة هادئة (٢٥ ديسيبل)، فلتر كربون نشط قابل للاستبدال، إضاءة LED ناعمة تشتغل بالحركة، وسعة ٢.٥ لتر. تعمل بشحن USB — آمنة وعملية لكل بيت سعودي.',
-    description_en:
-      'Hirra Aurora Fountain — cool, filtered, flowing water for your cat in the Riyadh heat. Silent pump (25 dB), replaceable activated carbon filter, motion-activated soft LED, 2.5L capacity. USB-powered — safe and practical for every Saudi home.',
-    price_sar: 229,
-    compare_at_price_sar: 279,
-    cost_sar: 65,
-    sku: 'HRR-FNT-001',
-    inventory_count: 20,
+      'جهاز مدمج يحمي ملابسك من الرطوبة والرائحة الكريهة — مثالي للمدن الساحلية.',
+    description_en: 'Compact closet mini dehumidifier for humid coastal homes.',
+    price_sar: 449,
+    compare_at_price_sar: 549,
+    cost_sar: 110,
+    sku: 'RYN-DSH-001',
+    inventory_count: 60,
     is_active: true,
     is_hero: false,
     display_order: 3,
     created_at: NOW,
     updated_at: NOW,
-    product_images: [
-      makeImage('prod-hirra-aurora-fountain', 'hirra-aurora-fountain', 'Hirra+Aurora'),
-    ],
+    product_images: makeImages('prod-riyanaluxe-armoire', 'riyanaluxe-armoire-seche'),
   },
 ];
 
 const PRODUCT_VARIANTS_BY_SLUG: Record<string, ProductVariant[]> = {
-  'hirra-pro-roller': ROLLER_VARIANTS,
-  'hirra-honeycomb-mat': [],
-  'hirra-aurora-fountain': [],
+  'riyanaluxe-mabkhara-luxe': MABKHARA_VARIANTS,
+  'riyanaluxe-pierre-seche': [],
+  'riyanaluxe-armoire-seche': [],
 };
 
-/**
- * Get a single product (with `images` + `variants`) by slug from the local
- * fallback. Returns null if no product matches.
- */
 export function getFallbackProductBySlug(slug: string): ProductWithDetails | null {
-  const product = FALLBACK_PRODUCTS.find((p) => p.slug === slug);
+  const canonical = LEGACY_PRODUCT_SLUG_REDIRECTS[slug] ?? slug;
+  const product = FALLBACK_PRODUCTS.find((p) => p.slug === canonical);
   if (!product) return null;
   const { product_images, ...rest } = product;
   return {
     ...rest,
     images: product_images,
-    variants: PRODUCT_VARIANTS_BY_SLUG[slug] ?? [],
+    variants: PRODUCT_VARIANTS_BY_SLUG[canonical] ?? [],
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/* Bundles                                                                     */
-/* -------------------------------------------------------------------------- */
+export function getFallbackBundleBySlug(slug: string): BundleWithProducts | null {
+  const canonical = LEGACY_BUNDLE_SLUG_REDIRECTS[slug] ?? slug;
+  return FALLBACK_BUNDLES.find((b) => b.slug === canonical) ?? null;
+}
 
-const BUNDLE_IMAGE_BASE = 'https://placehold.co/1200x900/F4ECE0/0E5C42';
-
-/**
- * Until we shoot dedicated bundle stills (Phase-2 supplier shoot), each
- * bundle reuses the most evocative single-product shot in its set.
- */
 const BUNDLE_IMAGES: Record<string, string> = {
-  'hirra-trio': '/brand/hero-living-room.png',
-  'clean-home-bundle': '/brand/hirra-honeycomb-mat.png',
-  'pampered-cat-set': '/brand/hirra-aurora-fountain.png',
+  'rituel-du-foyer': RIYANALUXE_ASSETS.bundles.rituelFoyer,
+  'coffret-eid': RIYANALUXE_ASSETS.bundles.coffretEid,
+  'maison-seche': RIYANALUXE_ASSETS.bundles.maisonSeche,
 };
 
-/**
- * When `bundles.image_url` from Supabase is empty or a placeholder, use the
- * same local assets as `FALLBACK_BUNDLES` (hero + product photography).
- */
 export function withLocalBundleImageFallback<T extends Bundle>(bundle: T): T {
+  if (!isRiyanaluxeBundleSlug(bundle.slug)) return bundle;
   if (!isMissingOrPlaceholderProductImageUrl(bundle.image_url)) return bundle;
   const local = BUNDLE_IMAGES[bundle.slug];
   if (!local) return bundle;
   return { ...bundle, image_url: local } as T;
 }
 
-function bundleImage(slug: string, fallbackLabel: string) {
-  return BUNDLE_IMAGES[slug] ?? `${BUNDLE_IMAGE_BASE}?text=${encodeURIComponent(fallbackLabel)}`;
-}
-
 const BUNDLE_BASE: Bundle[] = [
   {
-    id: 'bundle-hirra-trio',
-    slug: 'hirra-trio',
-    name_ar: 'مجموعة هِرّة الثلاثية',
-    name_en: 'The Hirra Trio',
-    description_ar: 'البطل الكامل — الرولر + الحصيرة + النافورة في مجموعة واحدة فاخرة، بسعر خاص.',
-    description_en:
-      'The complete cat-mom kit — roller + mat + fountain in one premium bundle, at a special price.',
-    price_sar: 397,
-    savings_sar: 50,
-    image_url: bundleImage('hirra-trio', 'Hirra+Trio'),
+    id: 'bundle-rituel',
+    slug: 'rituel-du-foyer',
+    name_ar: 'طقس الضيافة',
+    name_en: 'Rituel d\'Hospitalité',
+    description_ar: 'مبخرة لوكس + بيير سيك',
+    description_en: 'Mabkhara Luxe + Pierre Sèche',
+    price_sar: 399,
+    savings_sar: 99,
+    image_url: BUNDLE_IMAGES['rituel-du-foyer'],
     is_active: true,
     display_order: 1,
   },
   {
-    id: 'bundle-clean-home',
-    slug: 'clean-home-bundle',
-    name_ar: 'مجموعة البيت النظيف',
-    name_en: 'The Clean-Home Bundle',
-    description_ar: 'بيت نظيف، قطة سعيدة. الرولر + الحصيرة بسعر مجموعة.',
-    description_en: 'Clean home, happy cat. The Roller + Mat at a bundle price.',
-    price_sar: 189,
-    savings_sar: 29,
-    image_url: bundleImage('clean-home-bundle', 'Clean+Home'),
+    id: 'bundle-eid',
+    slug: 'coffret-eid',
+    name_ar: 'ليالي ريانا',
+    name_en: 'Nuits Riyana',
+    description_ar: 'مبخرة لوكس + بيير سيك + أرمور سيك',
+    description_en: 'Mabkhara Luxe + Pierre Sèche + Armoire Sèche',
+    price_sar: 599,
+    savings_sar: 348,
+    image_url: BUNDLE_IMAGES['coffret-eid'],
     is_active: true,
     display_order: 2,
   },
   {
-    id: 'bundle-pampered',
-    slug: 'pampered-cat-set',
-    name_ar: 'مجموعة الدلال',
-    name_en: 'The Pampered Cat Set',
-    description_ar: 'دلال على دلال. الرولر + النافورة لقطتك المدللة.',
-    description_en: 'Spoiled, with love. The Roller + Fountain for your pampered cat.',
-    price_sar: 289,
-    savings_sar: 39,
-    image_url: bundleImage('pampered-cat-set', 'Pampered+Set'),
+    id: 'bundle-maison',
+    slug: 'maison-seche',
+    name_ar: 'لمسة فخامة',
+    name_en: 'Touche de Prestige',
+    description_ar: 'بيير سيك + أرمور سيك',
+    description_en: 'Pierre Sèche + Armoire Sèche',
+    price_sar: 499,
+    savings_sar: 199,
+    image_url: BUNDLE_IMAGES['maison-seche'],
     is_active: true,
     display_order: 3,
   },
 ];
 
-const BUNDLE_PRODUCT_SLUGS: Record<string, string[]> = {
-  'hirra-trio': ['hirra-pro-roller', 'hirra-honeycomb-mat', 'hirra-aurora-fountain'],
-  'clean-home-bundle': ['hirra-pro-roller', 'hirra-honeycomb-mat'],
-  'pampered-cat-set': ['hirra-pro-roller', 'hirra-aurora-fountain'],
+const BUNDLE_SLUGS: Record<string, string[]> = {
+  'rituel-du-foyer': ['riyanaluxe-mabkhara-luxe', 'riyanaluxe-pierre-seche'],
+  'coffret-eid': ['riyanaluxe-mabkhara-luxe', 'riyanaluxe-pierre-seche', 'riyanaluxe-armoire-seche'],
+  'maison-seche': ['riyanaluxe-pierre-seche', 'riyanaluxe-armoire-seche'],
 };
 
-export const FALLBACK_BUNDLES: BundleWithProducts[] = BUNDLE_BASE.map((b) => ({
+export const FALLBACK_BUNDLES: BundleWithProducts[] = BUNDLE_BASE.filter((b) =>
+  isRiyanaluxeBundleSlug(b.slug),
+).map((b) => ({
   ...b,
-  products: (BUNDLE_PRODUCT_SLUGS[b.slug] ?? [])
-    .map((slug) => FALLBACK_PRODUCTS.find((p) => p.slug === slug))
-    .filter((p): p is (typeof FALLBACK_PRODUCTS)[number] => Boolean(p))
-    .map((p) => ({
-      ...p,
-      quantity: 1,
-    })),
+  products: (BUNDLE_SLUGS[b.slug] ?? [])
+    .map((productSlug) => {
+      const p = getFallbackProductBySlug(productSlug);
+      if (!p) return null;
+      const { images: _i, variants: _v, ...row } = p;
+      return { ...row, quantity: 1 };
+    })
+    .filter((p): p is NonNullable<typeof p> => Boolean(p)),
 }));
-
-/* -------------------------------------------------------------------------- */
-/* Reviews                                                                     */
-/* -------------------------------------------------------------------------- */
 
 function review(
   id: string,
@@ -381,73 +363,53 @@ function review(
 
 export const FALLBACK_REVIEWS: Review[] = [
   review(
-    'rev-roller-1',
-    'prod-hirra-pro-roller',
-    'نورة',
-    'الرياض',
+    'rev-mbk-1',
+    'prod-riyanaluxe-mabkhara',
+    'سلمى',
+    'الدار البيضاء',
     5,
-    'أنقذني قبل الحفلات',
-    'اشتريتها قبل أسبوع. الرولر ده أنقذني قبل الحفلات — كنت أمشي وعليّ شعر القطة وأنا ما أحس. هِرّة برو غيّر كل شي. والتغليف فخم. أوصي بها بقوة 💚',
+    'هدية العيد المثالية',
+    'شريتها لأمي فالعيد — البخور يتسخن بسرعة والتغليف يبان غالي. ضيوف الدار كيعجبهم بزاف.',
     1,
   ),
   review(
-    'rev-roller-2',
-    'prod-hirra-pro-roller',
-    'سارة',
-    'جدة',
+    'rev-mbk-2',
+    'prod-riyanaluxe-mabkhara',
+    'ياسمين',
+    'الرباط',
     5,
-    'أول رولر يضبط معاي',
-    'عندي ٣ قطط شيرازي وشعرهم في كل مكان. جربت كل أنواع الرولرات من أمازون، ما واحد ضبط معاي. هذا أول رولر يجمع الشعر فعلاً وما يحتاج لصقات.',
+    'بلا فحم، بلا فوضى',
+    'أخيراً مبخرة ما كتوسخ الصالون. التصميم أسود وذهبي كيمشي مع الديكور ديالي.',
     2,
   ),
   review(
-    'rev-roller-3',
-    'prod-hirra-pro-roller',
-    'ريما',
-    'الدمام',
-    4,
-    'خدمة سعودية حقيقية',
-    'جودة ممتازة، التغليف فخم، والخدمة على واتساب سريعة جداً. خصمت نجمة فقط لأن اللون اللي طلبته كان مختلف شوي عن الصورة — بس لما تواصلت معاهم، استبدلوا فوراً.',
+    'rev-mbk-3',
+    'prod-riyanaluxe-mabkhara',
+    'نادية',
+    'مراكش',
+    5,
+    'ريحة الدار تبدل',
+    'من بعد ما بديت نخدمها كل ليلة، الصالون كيبان فندق. التوصيل كان سريع والدفع عند التسليم.',
     3,
   ),
   review(
-    'rev-roller-4',
-    'prod-hirra-pro-roller',
-    'مايا',
-    'الرياض',
+    'rev-pierre-1',
+    'prod-riyanaluxe-pierre',
+    'هبة',
+    'طنجة',
     5,
-    'هدية مثالية',
-    'أهديته لأختي اللي عندها قطتها قمر، ومن يومها وهي تشكرني. التغليف يحس لك إنه من براند فاخر، مش دروبشيبنغ عادي.',
-    4,
-  ),
-  review(
-    'rev-roller-5',
-    'prod-hirra-pro-roller',
-    'علا',
-    'الخبر',
-    5,
-    'يستاهل كل ريال',
-    'أعمل في شركة وما أقدر أمشي وعليّ شعر القطة. الرولر ده وفّر علي كل صباح. بصراحة، يستاهل كل ريال.',
-    5,
-  ),
-  review(
-    'rev-mat-1',
-    'prod-hirra-honeycomb-mat',
-    'هند',
-    'الرياض',
-    5,
-    'وقفت رمل القطة عن المرمر',
-    'الحصيرة كبيرة وتمسك الرمل تماماً. الرخام عندي نضيف لأول مرة من زمان. مع ضمان رضا فعلاً يطمنك.',
+    'الحمام ولى جاف',
+    'الماء كيمشي فثواني — مابقاتش البساطة مبلولة. شي فخم بصح.',
     1,
   ),
   review(
-    'rev-fountain-1',
-    'prod-hirra-aurora-fountain',
-    'دانة',
-    'جدة',
+    'rev-armoire-1',
+    'prod-riyanaluxe-armoire',
+    'ليلى',
+    'الدار البيضاء',
     5,
-    'قطتي صارت تشرب أكثر',
-    'النافورة هادية فعلاً وقطتي تشرب منها أكثر بكثير من الصحن العادي. الإضاءة جميلة وما تحتاج كهرباء — USB فقط.',
+    'الدولاب بلا ريحة',
+    'فكرة ما كنتش نعرفها — الماء كيتجمع فالخزان والعبايات بقاو ناشفين.',
     1,
   ),
 ];
@@ -455,3 +417,7 @@ export const FALLBACK_REVIEWS: Review[] = [
 export function getFallbackReviewsForProduct(productId: string): Review[] {
   return FALLBACK_REVIEWS.filter((r) => r.product_id === productId);
 }
+
+/** Allowed storefront SKUs (for defensive filtering). */
+export const ALLOWED_PRODUCT_SLUGS = RIYANALUXE_PRODUCT_SLUGS;
+export const ALLOWED_BUNDLE_SLUGS = RIYANALUXE_BUNDLE_SLUGS;

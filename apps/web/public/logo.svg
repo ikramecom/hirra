@@ -1,17 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 32" fill="none" role="img" aria-label="HIRRA">
-  <g transform="translate(0, 2)">
-    <path d="M7 24V8" stroke="#2E1E12" stroke-width="2.25" stroke-linecap="round"/>
-    <path d="M21 24V8" stroke="#2E1E12" stroke-width="2.25" stroke-linecap="round"/>
-    <path d="M7 16h7.5" stroke="#2E1E12" stroke-width="2.25" stroke-linecap="round"/>
-    <path d="M17.5 8.5c5.2 1.4 8.8 5.4 9.2 11.8" stroke="#2E1E12" stroke-width="2.25" stroke-linecap="round"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72" fill="none" role="img" aria-label="RIYANALUXE  1J'F' DHC3">
+  <defs>
+    <linearGradient id="rl-gold" x1="0" y1="0" x2="320" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EDE0B8"/>
+      <stop offset="45%" stop-color="#C9A962"/>
+      <stop offset="100%" stop-color="#8A7238"/>
+    </linearGradient>
+    <linearGradient id="rl-glow" x1="36" y1="12" x2="36" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C9A962" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#C9A962" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Monogram -->
+  <circle cx="36" cy="36" r="32" stroke="url(#rl-gold)" stroke-width="1.1" fill="#0A0908"/>
+  <circle cx="36" cy="36" r="27.5" stroke="#C9A962" stroke-opacity="0.16" stroke-width="0.5"/>
+  <ellipse cx="36" cy="52" rx="11" ry="3.2" fill="url(#rl-glow)"/>
+  <path
+    d="M36 12c-1.9 7.5-8.6 12.8-8.6 20.2a8.6 8.6 0 1 0 17.2 0c0-7.4-6.7-12.7-8.6-20.2z"
+    fill="url(#rl-gold)"
+  />
+  <path
+    d="M36 17.2c-1 4.4-4 7.6-4 12a4 4 0 1 0 8 0c0-4.4-3-7.6-4-12z"
+    fill="#0A0908"
+    fill-opacity="0.5"
+  />
+  <path d="M36 9.8 37.8 13.8 36 12.8 34.2 13.8Z" fill="url(#rl-gold)"/>
+  <!-- Connector -->
+  <path d="M76 36h10" stroke="url(#rl-gold)" stroke-width="0.65" stroke-linecap="round" opacity="0.7"/>
+  <circle cx="90" cy="36" r="1.2" fill="#C9A962" opacity="0.85"/>
+  <path d="M94 36h6" stroke="url(#rl-gold)" stroke-width="0.65" stroke-linecap="round" opacity="0.45"/>
+  <!-- Wordmark -->
   <text
-    x="38"
-    y="22"
-    font-family="Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
-    font-size="17"
-    font-weight="600"
-    letter-spacing="0.12em"
-    fill="#2E1E12"
-  >HIRRA</text>
+    x="104"
+    y="34"
+    fill="#F5F0E8"
+    font-family="Georgia, 'Cormorant Garamond', 'Times New Roman', serif"
+    font-size="19"
+    font-weight="500"
+    letter-spacing="0.34em"
+  >RIYANALUXE</text>
+  <path d="M104 42h168" stroke="#C9A962" stroke-opacity="0.35" stroke-width="0.5"/>
+  <text
+    x="104"
+    y="56"
+    fill="url(#rl-gold)"
+    font-family="'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif"
+    font-size="12.5"
+    letter-spacing="0.2em"
+  >1J'F' DHC3</text>
 </svg>

@@ -11,11 +11,11 @@ interface AccordionItemProps {
 export function AccordionItem({ question, answer, defaultOpen = false }: AccordionItemProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-sand/50 last:border-b-0">
+    <div className="border-b border-gold/15 last:border-b-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-4 py-4 text-start text-walnut font-semibold hover:text-emerald transition"
+        className="w-full flex items-center justify-between gap-4 py-4 text-start text-pearl font-semibold hover:text-gold transition"
         aria-expanded={open}
       >
         <span>{question}</span>
@@ -31,7 +31,7 @@ export function AccordionItem({ question, answer, defaultOpen = false }: Accordi
         )}
       >
         <div className="overflow-hidden">
-          <div className="text-walnut/80 leading-relaxed">{answer}</div>
+          <div className="text-champagne leading-relaxed">{answer}</div>
         </div>
       </div>
     </div>

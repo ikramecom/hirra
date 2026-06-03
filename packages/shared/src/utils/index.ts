@@ -1,4 +1,5 @@
 export * from './currency';
+export * from './digits';
 export * from './phone';
 export * from './fake-order-score';
 export * from './cart';

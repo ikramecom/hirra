@@ -14,7 +14,7 @@ interface PaymentStripProps {
  * the active method; the rest render muted with a "soon" feel.
  */
 export function PaymentStrip({ className, showComingSoon = true }: PaymentStripProps) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const locale = i18n.language as 'ar' | 'en';
 
   return (
@@ -26,7 +26,7 @@ export function PaymentStrip({ className, showComingSoon = true }: PaymentStripP
     >
       <span className="inline-flex items-center gap-1.5 rounded-full border border-walnut/15 bg-whisper px-3 py-1.5 font-semibold text-walnut">
         <Banknote className="h-3.5 w-3.5 text-emerald" />
-        {locale === 'ar' ? 'دفع عند الاستلام' : 'Cash on delivery'}
+        {t('trust.cod_label')}
       </span>
       {showComingSoon
         ? ['Mada', 'Apple Pay', 'STC Pay', 'Tabby', 'Tamara'].map((method) => (

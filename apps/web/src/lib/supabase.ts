@@ -10,7 +10,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn(
-    '[hirra] Supabase env vars missing. Copy .env.example → apps/web/.env.local and fill in your project URL + anon key.',
+    '[riyanaluxe] Supabase env vars missing. Copy .env.example → apps/web/.env.local and fill in your project URL + anon key.',
   );
 }
 
