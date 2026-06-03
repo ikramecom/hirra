@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { trackMetaLead } from '@/lib/meta-pixel';
 import { CONTACT_FORM, WHATSAPP } from '@/lib/sections-data';
 
 interface ContactFormProps {
@@ -15,6 +16,7 @@ export function ContactForm({ compact = false }: ContactFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    trackMetaLead('contact_form_submit');
     const body = [
       'مرحباً Blango Studio،',
       '',
