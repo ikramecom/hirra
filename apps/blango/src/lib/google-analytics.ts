@@ -37,6 +37,15 @@ export function isGa4InHtml(): boolean {
   return document.documentElement.dataset.blangoGa4 === '1';
 }
 
+function logGtagState(context: string): void {
+  console.log(`${LOG_PREFIX} ${context}`, {
+    windowGtagType: typeof window.gtag,
+    windowGtagExists: typeof window.gtag === 'function',
+    dataLayerLength: window.dataLayer?.length ?? 0,
+    ga4InHtml: isGa4InHtml(),
+  });
+}
+
 function ensureGtagFunction(): void {
   window.dataLayer = window.dataLayer ?? [];
   if (!window.gtag) {
@@ -69,36 +78,45 @@ export function initGoogleAnalytics(): boolean {
   }
 
   console.log(`${LOG_PREFIX} measurement ID detected`, measurementId);
+  logGtagState('before init');
 
   if (gtagInitialized) {
     console.log(`${LOG_PREFIX} GA4 already initialized`);
     return true;
   }
 
-  if (isGa4InHtml() && window.gtag) {
-    gtagInitialized = true;
-    console.log(`${LOG_PREFIX} GA4 initialized`);
-    return true;
+  if (!window.gtag) {
+    ensureGtagFunction();
   }
 
-  ensureGtagFunction();
-  injectGtagScript(measurementId);
-  window.gtag?.('js', new Date());
-  window.gtag?.('config', measurementId, { send_page_view: false });
+  if (!isGa4InHtml()) {
+    injectGtagScript(measurementId);
+    window.gtag?.('js', new Date());
+    window.gtag?.('config', measurementId, { send_page_view: false });
+  }
+
   gtagInitialized = true;
+  logGtagState('after init');
   console.log(`${LOG_PREFIX} GA4 initialized`);
   return true;
 }
 
-/** Sends a page_view for SPA navigations (explicit gtag event). */
+/**
+ * Sends a page_view using the official GA4 SPA pattern:
+ * gtag('config', MEASUREMENT_ID, { page_path, page_location, page_title })
+ *
+ * Required when the base config uses send_page_view:false (see Google SPA docs).
+ */
 export function trackGa4PageView(pathname?: string): void {
   const measurementId = getGa4MeasurementId();
+  logGtagState('before page_view');
+
   if (!measurementId) {
     console.warn(`${LOG_PREFIX} page_view skipped — no measurement ID`);
     return;
   }
-  if (!window.gtag) {
-    console.warn(`${LOG_PREFIX} page_view skipped — gtag not available`);
+  if (typeof window.gtag !== 'function') {
+    console.warn(`${LOG_PREFIX} page_view skipped — window.gtag missing`);
     return;
   }
 
@@ -110,9 +128,9 @@ export function trackGa4PageView(pathname?: string): void {
     page_path: pagePath,
     page_location: `${window.location.origin}${pagePath}`,
     page_title: document.title,
-    send_to: measurementId,
   };
 
-  window.gtag('event', 'page_view', payload);
+  console.log(`${LOG_PREFIX} executing page_view`, payload);
+  window.gtag('config', measurementId, payload);
   console.log(`${LOG_PREFIX} page_view sent`, payload);
 }
