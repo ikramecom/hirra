@@ -67,7 +67,7 @@ export function resolveSiteOrigin(): string {
     return envUrl.replace(/\/$/, '');
   }
 
-  return 'https://blangostudio.com';
+  return 'https://www.blangostudio.com';
 }
 
 function trimForMobileSnippet(text: string, maxLength: number): string {

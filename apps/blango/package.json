@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node scripts/generate-seo-files.mjs && vite",
+    "build": "node scripts/generate-seo-files.mjs && tsc -b && vite build",
     "preview": "vite preview --port 4180",
     "typecheck": "tsc -b --noEmit"
   },

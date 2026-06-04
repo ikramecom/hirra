@@ -1,3 +1,4 @@
+/** Public URL paths — also listed in site.config.mjs for sitemap.xml generation. */
 export const ROUTES = {
   home: '/',
   services: '/services',
