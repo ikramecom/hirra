@@ -33,6 +33,22 @@ Vite bakes this into the bundle and `index.html` at **build** time. Changing the
 Optional:
 
 - `VITE_SITE_URL` — canonical / Open Graph absolute URLs
+- `VITE_GA4_ID` — defaults to `G-6PJH1GP650` if unset
+
+## Google Analytics 4 (GA4)
+
+Measurement ID: **G-6PJH1GP650**
+
+- Official `gtag.js` is injected into `index.html` at build time.
+- `GoogleAnalytics` in `AppLayout` sends `page_path` on each React Router navigation.
+
+### Verify GA4 after deploy
+
+1. **View page source** — search for `@blango/studio Google Analytics` and `googletagmanager.com/gtag/js?id=G-6PJH1GP650`.
+2. **Network** — `gtag/js?id=G-6PJH1GP650` loads with status 200.
+3. **GA4 Realtime** — [analytics.google.com](https://analytics.google.com) → Reports → Realtime; open the site in another tab and confirm an active user.
+4. **Tag Assistant** (Chrome) — detects Google tag `G-6PJH1GP650`.
+5. Navigate to `/pricing` or `/contact` — Realtime should show additional page views (SPA `page_path` updates).
 
 ## Meta Pixel verification
 

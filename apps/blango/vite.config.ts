@@ -6,9 +6,20 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MONOREPO_ROOT = path.resolve(__dirname, '../..');
 
+const BLANGO_GA4_MEASUREMENT_ID = 'G-6PJH1GP650';
+
 /** Meta Pixel IDs are numeric; strip anything else before embedding in HTML. */
 function sanitizeMetaPixelId(raw: string): string {
   return raw.replace(/\D/g, '');
+}
+
+/** GA4 IDs must match G-XXXXXXXX; fallback to Blango default. */
+function resolveGa4Id(mode: string): string {
+  const fromProcess = process.env.VITE_GA4_ID?.trim() ?? '';
+  const fromApp = loadEnv(mode, __dirname, '').VITE_GA4_ID?.trim() ?? '';
+  const fromRoot = loadEnv(mode, MONOREPO_ROOT, '').VITE_GA4_ID?.trim() ?? '';
+  const candidate = fromProcess || fromApp || fromRoot || BLANGO_GA4_MEASUREMENT_ID;
+  return /^G-[A-Z0-9]+$/i.test(candidate) ? candidate.toUpperCase() : BLANGO_GA4_MEASUREMENT_ID;
 }
 
 /**
@@ -20,6 +31,30 @@ function resolveMetaPixelId(mode: string): string {
   const fromApp = loadEnv(mode, __dirname, '').VITE_META_PIXEL_ID?.trim() ?? '';
   const fromRoot = loadEnv(mode, MONOREPO_ROOT, '').VITE_META_PIXEL_ID?.trim() ?? '';
   return sanitizeMetaPixelId(fromProcess || fromApp || fromRoot);
+}
+
+function ga4HtmlPlugin(measurementId: string): Plugin {
+  return {
+    name: 'blango-ga4-html',
+    transformIndexHtml(html) {
+      if (!measurementId) {
+        return html;
+      }
+
+      const snippet = `<!-- @blango/studio Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${measurementId}"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','${measurementId}');
+document.documentElement.dataset.blangoGa4='1';
+</script>`;
+
+      return html.includes('</head>')
+        ? html.replace('</head>', `${snippet}\n  </head>`)
+        : html;
+    },
+  };
 }
 
 function metaPixelHtmlPlugin(pixelId: string): Plugin {
@@ -48,12 +83,14 @@ document.documentElement.dataset.blangoMetaPixel='1';
 
 export default defineConfig(({ mode }) => {
   const metaPixelId = resolveMetaPixelId(mode);
+  const ga4Id = resolveGa4Id(mode);
 
   return {
-    plugins: [react(), metaPixelHtmlPlugin(metaPixelId)],
+    plugins: [react(), ga4HtmlPlugin(ga4Id), metaPixelHtmlPlugin(metaPixelId)],
     envDir: MONOREPO_ROOT,
     define: {
       __BLANGO_META_PIXEL_ID__: JSON.stringify(metaPixelId),
+      __BLANGO_GA4_ID__: JSON.stringify(ga4Id),
     },
     resolve: {
       alias: {
