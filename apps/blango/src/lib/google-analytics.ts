@@ -1,6 +1,8 @@
 /** Blango Studio GA4 measurement ID (overridable via VITE_GA4_ID at build). */
 export const BLANGO_GA4_MEASUREMENT_ID = 'G-6PJH1GP650';
 
+const LOG_PREFIX = '[Blango GA4]';
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -62,29 +64,41 @@ function injectGtagScript(measurementId: string): void {
 export function initGoogleAnalytics(): boolean {
   const measurementId = getGa4MeasurementId();
   if (!measurementId) {
+    console.warn(`${LOG_PREFIX} GA4 disabled — invalid measurement ID`);
     return false;
   }
+
+  console.log(`${LOG_PREFIX} measurement ID detected`, measurementId);
+
   if (gtagInitialized) {
+    console.log(`${LOG_PREFIX} GA4 already initialized`);
     return true;
   }
 
   if (isGa4InHtml() && window.gtag) {
     gtagInitialized = true;
+    console.log(`${LOG_PREFIX} GA4 initialized`);
     return true;
   }
 
   ensureGtagFunction();
   injectGtagScript(measurementId);
   window.gtag?.('js', new Date());
-  window.gtag?.('config', measurementId);
+  window.gtag?.('config', measurementId, { send_page_view: false });
   gtagInitialized = true;
+  console.log(`${LOG_PREFIX} GA4 initialized`);
   return true;
 }
 
-/** Sends a page_view for SPA navigations (official gtag config update). */
+/** Sends a page_view for SPA navigations (explicit gtag event). */
 export function trackGa4PageView(pathname?: string): void {
   const measurementId = getGa4MeasurementId();
-  if (!measurementId || !window.gtag) {
+  if (!measurementId) {
+    console.warn(`${LOG_PREFIX} page_view skipped — no measurement ID`);
+    return;
+  }
+  if (!window.gtag) {
+    console.warn(`${LOG_PREFIX} page_view skipped — gtag not available`);
     return;
   }
 
@@ -92,7 +106,13 @@ export function trackGa4PageView(pathname?: string): void {
     pathname ??
     `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
-  window.gtag('config', measurementId, {
+  const payload = {
     page_path: pagePath,
-  });
+    page_location: `${window.location.origin}${pagePath}`,
+    page_title: document.title,
+    send_to: measurementId,
+  };
+
+  window.gtag('event', 'page_view', payload);
+  console.log(`${LOG_PREFIX} page_view sent`, payload);
 }

@@ -46,9 +46,13 @@ function ga4HtmlPlugin(measurementId: string): Plugin {
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 gtag('js',new Date());
-gtag('config','${measurementId}');
+gtag('config','${measurementId}',{send_page_view:false});
 document.documentElement.dataset.blangoGa4='1';
 </script>`;
+
+      if (html.includes('<head>')) {
+        return html.replace('<head>', `<head>\n    ${snippet}`);
+      }
 
       return html.includes('</head>')
         ? html.replace('</head>', `${snippet}\n  </head>`)
